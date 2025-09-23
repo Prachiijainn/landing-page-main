@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Soothing Tech Color Palette - Minimal and calming */
+
+@layer base {
+  :root {
+    /* Base colors - Darker Soft Navy for background */
+    --background: 222 60% 15%;
+    --foreground: 222 25% 88%;
+
+    /* Cards/Panels - Darker Muted Slate Blue */
+    --card: 222 40% 22%;
+    --card-foreground: 222 25% 88%;
+
+    --popover: 222 40% 22%;
+    --popover-foreground: 222 25% 88%;
+
+    /* Primary - Gentle Cyan for buttons/highlights */
+    --primary: 201 94% 67%;
+    --primary-foreground: 222 60% 15%;
+    --primary-light: 201 94% 75%;
+    --primary-dark: 201 94% 55%;
+
+    /* Secondary - Darker Muted Slate Blue for cards/panels */
+    --secondary: 222 40% 25%;
+    --secondary-foreground: 222 25% 88%;
+    --secondary-light: 222 40% 32%;
+    --secondary-dark: 222 40% 18%;
+
+    /* Accent - Gentle Cyan for highlights */
+    --accent: 201 94% 67%;
+    --accent-foreground: 222 60% 15%;
+    --accent-light: 201 100% 75%;
+
+    /* Supporting colors - Light Gray for text */
+    --muted: 222 35% 28%;
+    --muted-foreground: 222 20% 75%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 222 25% 88%;
+
+    --border: 222 30% 32%;
+    --input: 222 30% 25%;
+    --ring: 201 94% 67%;
+
+    /* Soothing Tech specific design tokens - darker variants */
+    --tech-soft-navy: 222 60% 15%;
+    --tech-slate-blue: 222 40% 22%;
+    --tech-gentle-cyan: 201 94% 67%;
+    --tech-light-gray: 222 25% 88%;
+    --tech-hover-cyan: 201 100% 75%;
+
+    /* Hero Gradient: darker version */
+    --gradient-hero: linear-gradient(135deg, hsl(222, 60%, 15%) 0%, hsl(222, 40%, 22%) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(222, 40%, 22%) 0%, hsl(201, 94%, 75%) 100%);
+    --gradient-community: linear-gradient(135deg, hsl(222, 60%, 15%) 0%, hsl(201, 94%, 67%) 100%);
+
+    /* Shadows with darker tech theme */
+    --shadow-soft: 0 2px 10px -2px hsl(222, 60%, 8% / 0.4);
+    --shadow-medium: 0 8px 25px -8px hsl(222, 60%, 8% / 0.5);
+    --shadow-strong: 0 15px 35px -10px hsl(222, 60%, 8% / 0.6);
+
+    /* Spacing and typography for community feel */
+    --radius: 0.75rem;
+
+    /* Sidebar colors (keeping existing) */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Even darker navy for dark mode */
+    --background: 222 70% 8%;
+    --foreground: 222 25% 88%;
+
+    /* Very dark slate blue for cards in dark mode */
+    --card: 222 50% 12%;
+    --card-foreground: 222 25% 88%;
+
+    --popover: 222 50% 12%;
+    --popover-foreground: 222 25% 88%;
+
+    /* Brighter cyan for dark mode visibility */
+    --primary: 201 100% 75%;
+    --primary-foreground: 222 70% 8%;
+    --primary-light: 201 100% 85%;
+    --primary-dark: 201 94% 67%;
+
+    /* Very dark slate blue variations */
+    --secondary: 222 50% 15%;
+    --secondary-foreground: 222 25% 88%;
+    --secondary-light: 222 50% 20%;
+    --secondary-dark: 222 50% 10%;
+
+    /* Bright cyan for dark mode */
+    --accent: 201 100% 75%;
+    --accent-foreground: 222 70% 8%;
+    --accent-light: 201 100% 85%;
+
+    --muted: 222 45% 18%;
+    --muted-foreground: 222 20% 70%;
+
+    --destructive: 0 75% 65%;
+    --destructive-foreground: 222 25% 88%;
+
+    --border: 222 35% 20%;
+    --input: 222 35% 15%;
+    --ring: 201 100% 75%;
+
+    /* Dark mode soothing tech colors - darker variants */
+    --tech-soft-navy: 222 70% 8%;
+    --tech-slate-blue: 222 50% 12%;
+    --tech-gentle-cyan: 201 100% 75%;
+    --tech-light-gray: 222 25% 88%;
+    --tech-hover-cyan: 201 100% 85%;
+
+    /* Dark mode sidebar colors */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
