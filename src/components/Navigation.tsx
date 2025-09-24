@@ -18,15 +18,15 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="fixed top-0 w-full bg-tech-slate/40 backdrop-blur-md border-b border-tech-cyan/40 z-50">
+    <nav className="fixed top-0 w-full bg-white/35 backdrop-blur-md border-b border-tech-cyan/4 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <img 
-              src="/logo192.png" 
-              alt="NX Logo" 
-              className="h-10 w-auto"
+            <img
+              src="/logo192.png"
+              alt="NX Logo"
+              className="h-20 w-auto"
             />
           </div>
 
@@ -37,11 +37,13 @@ const Navigation = () => {
                 <Link
                   key={item.label}
                   to={item.href}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                    location.pathname === item.href
-                      ? "text-tech-cyan bg-tech-cyan/10"
-                      : "text-tech-gray hover:text-tech-cyan"
-                  }`}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200
+                    ${
+                      location.pathname === item.href
+                        ? "text-black bg-gray-200" // stays black, just adds a light background for active
+                        : "text-black"
+                    }
+                  `}
                 >
                   {item.label}
                 </Link>
@@ -69,11 +71,13 @@ const Navigation = () => {
                 <Link
                   key={item.label}
                   to={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
-                    location.pathname === item.href
-                      ? "text-tech-cyan bg-tech-cyan/10"
-                      : "text-tech-gray hover:text-tech-cyan"
-                  }`}
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200
+                    ${
+                      location.pathname === item.href
+                        ? "text-black bg-gray-200" // same here, black text + highlight
+                        : "text-black"
+                    }
+                  `}
                   onClick={() => setIsOpen(false)}
                 >
                   {item.label}

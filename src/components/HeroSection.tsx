@@ -11,7 +11,7 @@ const HeroSection = () => {
           className="w-full h-full bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(/home-image.jpg)` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/55 to-secondary/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/45 to-secondary/5 backdrop-blur-sm" />
       </div>
 
       {/* Content */}
@@ -20,20 +20,20 @@ const HeroSection = () => {
           {/* Floating badge */}
           <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-8 animate-float">
             <Heart className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium text-white">Building stronger communities together</span>
+            <span className="text-sm font-medium text-white">Growing Together</span>
           </div>
 
           {/* Main headline */}
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-fade-in">
-            Empowering
-            <span className="block text-accent">Communities</span>
-            Through Connection
+            Community  
+            <span className="block text-accent text-black">for ALL</span>
+            tech enthusiasts
           </h1>
 
           {/* Subheading */}
           <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed animate-slide-up">
-            Join a movement that believes in the power of people coming together to create positive change, 
-            foster growth, and build a better tomorrow for everyone.
+            Join a movement that believes in the power of people coming together to create positive change and
+            foster growth.
           </p>
 
           {/* CTA Buttons */}
@@ -41,9 +41,6 @@ const HeroSection = () => {
             <Button variant="community" size="lg" className="group">
               Join Our Community
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button variant="secondary" size="lg" className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border-white/30">
-              Learn Our Story
             </Button>
           </div>
 
