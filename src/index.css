@@ -2,135 +2,137 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Soothing Tech Color Palette - Minimal and calming */
+/* Unique Tech Color Palette - Modern, sleek, premium */
 
 @layer base {
   :root {
-    /* Base colors - Darker Soft Navy for background */
-    --background: 222 60% 15%;
-    --foreground: 222 25% 88%;
+    /* Base colors - Midnight Ink for dark backgrounds */
+    --background: 214 65% 90%;
+    --foreground: 214 65% 12%;
 
-    /* Cards/Panels - Darker Muted Slate Blue */
-    --card: 222 40% 22%;
-    --card-foreground: 222 25% 88%;
+    /* Cards/Panels - Graphite for card backgrounds */
+    --card: 220 12% 31%;
+    --card-foreground: 214 20% 85%;
 
-    --popover: 222 40% 22%;
-    --popover-foreground: 222 25% 88%;
+    --popover: 220 12% 31%;
+    --popover-foreground: 214 20% 85%;
 
-    /* Primary - Gentle Cyan for buttons/highlights */
-    --primary: 201 94% 67%;
-    --primary-foreground: 222 60% 15%;
-    --primary-light: 201 94% 75%;
-    --primary-dark: 201 94% 55%;
+    /* Primary - Neo Blue for brand color */
+    --primary: 208 60% 41%;
+    --primary-foreground: 214 20% 95%;
+    --primary-light: 208 60% 50%;
+    --primary-dark: 208 60% 35%;
 
-    /* Secondary - Darker Muted Slate Blue for cards/panels */
-    --secondary: 222 40% 25%;
-    --secondary-foreground: 222 25% 88%;
-    --secondary-light: 222 40% 32%;
-    --secondary-dark: 222 40% 18%;
+    /* Secondary - Cyber Teal for highlights */
+    --secondary: 170 60% 45%;
+    --secondary-foreground: 214 65% 12%;
+    --secondary-light: 170 60% 55%;
+    --secondary-dark: 170 60% 35%;
 
-    /* Accent - Gentle Cyan for highlights */
-    --accent: 201 94% 67%;
-    --accent-foreground: 222 60% 15%;
-    --accent-light: 201 100% 75%;
+    /* Accent - Signal Amber for CTAs and warnings */
+    --accent: 41 90% 55%;
+    --accent-foreground: 214 65% 12%;
+    --accent-light: 41 90% 65%;
 
-    /* Supporting colors - Light Gray for text */
-    --muted: 222 35% 28%;
-    --muted-foreground: 222 20% 75%;
+    /* Supporting neutrals */
+    --muted: 214 20% 85%;
+    --muted-foreground: 220 12% 40%;
 
     --destructive: 0 75% 55%;
-    --destructive-foreground: 222 25% 88%;
+    --destructive-foreground: 214 20% 95%;
 
-    --border: 222 30% 32%;
-    --input: 222 30% 25%;
-    --ring: 201 94% 67%;
+    --border: 214 20% 80%;
+    --input: 214 20% 88%;
+    --ring: 170 60% 45%;
 
-    /* Soothing Tech specific design tokens - darker variants */
-    --tech-soft-navy: 222 60% 15%;
-    --tech-slate-blue: 222 40% 22%;
-    --tech-gentle-cyan: 201 94% 67%;
-    --tech-light-gray: 222 25% 88%;
-    --tech-hover-cyan: 201 100% 75%;
+    /* Unique Tech Color Palette */
+    --tech-neo-blue: 208 60% 41%;        /* #276BA7 - primary brand */
+    --tech-midnight-ink: 214 65% 12%;    /* #0F1B2E - backgrounds/hero */
+    --tech-cyber-teal: 170 60% 45%;      /* #2BC4A7 - hover/buttons */
+    --tech-signal-amber: 41 90% 55%;     /* #F5A623 - CTAs/warnings */
+    --tech-soft-steel: 214 20% 85%;      /* #CED4DA - text backgrounds */
+    --tech-graphite: 220 12% 31%;        /* #444C56 - secondary text/cards */
 
-    /* Hero Gradient: darker version */
-    --gradient-hero: linear-gradient(135deg, hsl(222, 60%, 15%) 0%, hsl(222, 40%, 22%) 100%);
-    --gradient-warm: linear-gradient(135deg, hsl(222, 40%, 22%) 0%, hsl(201, 94%, 75%) 100%);
-    --gradient-community: linear-gradient(135deg, hsl(222, 60%, 15%) 0%, hsl(201, 94%, 67%) 100%);
+    /* Hero Gradients: Unique tech theme */
+    --gradient-hero: linear-gradient(135deg, hsl(214, 65%, 12%) 0%, hsl(208, 60%, 41%) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(220, 12%, 31%) 0%, hsl(170, 60%, 45%) 100%);
+    --gradient-community: linear-gradient(135deg, hsl(214, 65%, 12%) 0%, hsl(170, 60%, 45%) 100%);
 
-    /* Shadows with darker tech theme */
-    --shadow-soft: 0 2px 10px -2px hsl(222, 60%, 8% / 0.4);
-    --shadow-medium: 0 8px 25px -8px hsl(222, 60%, 8% / 0.5);
-    --shadow-strong: 0 15px 35px -10px hsl(222, 60%, 8% / 0.6);
+    /* Shadows with unique tech theme */
+    --shadow-soft: 0 2px 10px -2px hsl(214, 65%, 8% / 0.3);
+    --shadow-medium: 0 8px 25px -8px hsl(214, 65%, 8% / 0.4);
+    --shadow-strong: 0 15px 35px -10px hsl(214, 65%, 8% / 0.5);
 
-    /* Spacing and typography for community feel */
+    /* Modern tech styling */
     --radius: 0.75rem;
 
-    /* Sidebar colors (keeping existing) */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar colors */
+    --sidebar-background: 214 20% 88%;
+    --sidebar-foreground: 214 65% 12%;
+    --sidebar-primary: 208 60% 41%;
+    --sidebar-primary-foreground: 214 20% 95%;
+    --sidebar-accent: 170 60% 45%;
+    --sidebar-accent-foreground: 214 65% 12%;
+    --sidebar-border: 214 20% 80%;
+    --sidebar-ring: 170 60% 45%;
   }
 
   .dark {
-    /* Even darker navy for dark mode */
-    --background: 222 70% 8%;
-    --foreground: 222 25% 88%;
+    /* Midnight Ink for dark mode background */
+    --background: 214 65% 12%;
+    --foreground: 214 20% 85%;
 
-    /* Very dark slate blue for cards in dark mode */
-    --card: 222 50% 12%;
-    --card-foreground: 222 25% 88%;
+    /* Graphite for cards in dark mode */
+    --card: 220 12% 31%;
+    --card-foreground: 214 20% 85%;
 
-    --popover: 222 50% 12%;
-    --popover-foreground: 222 25% 88%;
+    --popover: 220 12% 31%;
+    --popover-foreground: 214 20% 85%;
 
-    /* Brighter cyan for dark mode visibility */
-    --primary: 201 100% 75%;
-    --primary-foreground: 222 70% 8%;
-    --primary-light: 201 100% 85%;
-    --primary-dark: 201 94% 67%;
+    /* Neo Blue for primary in dark mode */
+    --primary: 208 60% 41%;
+    --primary-foreground: 214 20% 95%;
+    --primary-light: 208 60% 50%;
+    --primary-dark: 208 60% 35%;
 
-    /* Very dark slate blue variations */
-    --secondary: 222 50% 15%;
-    --secondary-foreground: 222 25% 88%;
-    --secondary-light: 222 50% 20%;
-    --secondary-dark: 222 50% 10%;
+    /* Cyber Teal for secondary in dark mode */
+    --secondary: 170 60% 45%;
+    --secondary-foreground: 214 65% 12%;
+    --secondary-light: 170 60% 55%;
+    --secondary-dark: 170 60% 35%;
 
-    /* Bright cyan for dark mode */
-    --accent: 201 100% 75%;
-    --accent-foreground: 222 70% 8%;
-    --accent-light: 201 100% 85%;
+    /* Signal Amber for accent in dark mode */
+    --accent: 41 90% 55%;
+    --accent-foreground: 214 65% 12%;
+    --accent-light: 41 90% 65%;
 
-    --muted: 222 45% 18%;
-    --muted-foreground: 222 20% 70%;
+    --muted: 220 12% 25%;
+    --muted-foreground: 214 20% 70%;
 
     --destructive: 0 75% 65%;
-    --destructive-foreground: 222 25% 88%;
+    --destructive-foreground: 214 20% 95%;
 
-    --border: 222 35% 20%;
-    --input: 222 35% 15%;
-    --ring: 201 100% 75%;
+    --border: 220 12% 35%;
+    --input: 220 12% 25%;
+    --ring: 170 60% 45%;
 
-    /* Dark mode soothing tech colors - darker variants */
-    --tech-soft-navy: 222 70% 8%;
-    --tech-slate-blue: 222 50% 12%;
-    --tech-gentle-cyan: 201 100% 75%;
-    --tech-light-gray: 222 25% 88%;
-    --tech-hover-cyan: 201 100% 85%;
+    /* Dark mode unique tech colors */
+    --tech-neo-blue: 208 60% 45%;        /* Brighter for visibility */
+    --tech-midnight-ink: 214 65% 8%;     /* Even darker for backgrounds */
+    --tech-cyber-teal: 170 60% 50%;      /* Brighter teal for dark mode */
+    --tech-signal-amber: 41 90% 60%;     /* Brighter amber for visibility */
+    --tech-soft-steel: 214 20% 85%;      /* Light text */
+    --tech-graphite: 220 12% 25%;        /* Darker graphite for cards */
 
     /* Dark mode sidebar colors */
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 214 65% 12%;
+    --sidebar-foreground: 214 20% 85%;
+    --sidebar-primary: 208 60% 41%;
+    --sidebar-primary-foreground: 214 20% 95%;
+    --sidebar-accent: 170 60% 45%;
+    --sidebar-accent-foreground: 214 65% 12%;
+    --sidebar-border: 220 12% 30%;
+    --sidebar-ring: 170 60% 45%;
   }
 }
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -95,15 +96,15 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="py-20 bg-background">
+    <section id="contact" className="py-20 bg-tech-soft-steel">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-tech-midnight-ink mb-6">
               Get In Touch
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-tech-graphite max-w-3xl mx-auto leading-relaxed">
               Have questions, ideas, or want to learn more about getting involved? 
               We'd love to hear from you and help you find your place in our community.
             </p>
@@ -112,14 +113,14 @@ const ContactSection = () => {
           {/* Contact Info Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             {contactInfo.map((info, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-all duration-300 border-border hover:border-primary/30 bg-card">
+              <Card key={index} className="text-center hover:shadow-lg transition-all duration-300 border-tech-neo-blue/20 hover:border-tech-cyber-teal/40 bg-white">
                 <CardContent className="p-6">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-                    <info.icon className="w-8 h-8 text-primary" />
+                  <div className="w-16 h-16 mx-auto mb-4 bg-tech-neo-blue/10 rounded-full flex items-center justify-center">
+                    <info.icon className="w-8 h-8 text-tech-neo-blue" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">{info.title}</h3>
-                  <p className="text-primary font-medium mb-2">{info.details}</p>
-                  <p className="text-sm text-muted-foreground">{info.description}</p>
+                  <h3 className="text-lg font-semibold text-tech-midnight-ink mb-2">{info.title}</h3>
+                  <p className="text-tech-neo-blue font-medium mb-2">{info.details}</p>
+                  <p className="text-sm text-tech-graphite">{info.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -128,13 +129,13 @@ const ContactSection = () => {
           {/* Main Contact Section */}
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <Card className="bg-card border-border">
+            <Card className="bg-white border-tech-neo-blue/20">
               <CardHeader>
-                <CardTitle className="text-2xl text-foreground flex items-center">
-                  <MessageCircle className="w-6 h-6 mr-2 text-primary" />
+                <CardTitle className="text-2xl text-tech-midnight-ink flex items-center">
+                  <MessageCircle className="w-6 h-6 mr-2 text-tech-neo-blue" />
                   Send Us a Message
                 </CardTitle>
-                <p className="text-muted-foreground">
+                <p className="text-tech-graphite">
                   Whether you have questions, want to collaborate, or need support, 
                   we're here to help. Fill out the form below and we'll get back to you promptly.
                 </p>

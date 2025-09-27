@@ -11,27 +11,27 @@ const HeroSection = () => {
           className="w-full h-full bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(/home-image.jpg)` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/45 to-secondary/5 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-gradient-to-r from-tech-midnight-ink/90 via-tech-neo-blue/70 to-tech-graphite/85 backdrop-blur-sm" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto">
           {/* Floating badge */}
-          <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-8 animate-float">
-            <Heart className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium text-white">Growing Together</span>
+          <div className="inline-flex items-center space-x-2 bg-tech-graphite/40 backdrop-blur-sm rounded-full px-4 py-2 mb-8 animate-float border border-tech-cyber-teal/30">
+            <Heart className="w-4 h-4 text-tech-cyber-teal" />
+            <span className="text-sm font-medium text-tech-soft-steel">Growing Together</span>
           </div>
 
           {/* Main headline */}
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-fade-in">
-            Community  
-            <span className="block text-accent text-black">for ALL</span>
-            tech enthusiasts
+          <h1 className="text-5xl md:text-7xl font-bold text-tech-soft-steel mb-6 animate-fade-in">
+            We
+            <span className="block text-tech-cyber-teal">WELCOME</span>
+            all tech enthusiasts
           </h1>
 
           {/* Subheading */}
-          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed animate-slide-up">
+          <p className="text-xl md:text-2xl text-tech-soft-steel/90 mb-12 max-w-2xl mx-auto leading-relaxed animate-slide-up">
             Join a movement that believes in the power of people coming together to create positive change and
             foster growth.
           </p>
@@ -48,23 +48,23 @@ const HeroSection = () => {
           <div className="flex flex-wrap justify-center gap-8 mt-16 animate-fade-in">
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
-                <Users className="w-6 h-6 text-accent mr-2" />
-                <span className="text-3xl font-bold text-white">1,200+</span>
+                <Users className="w-6 h-6 text-tech-cyber-teal mr-2" />
+                <span className="text-3xl font-bold text-tech-soft-steel">1,200+</span>
               </div>
-              <p className="text-white/80">Community Members</p>
+              <p className="text-tech-soft-steel/80">Community Members</p>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
-                <Heart className="w-6 h-6 text-accent mr-2" />
-                <span className="text-3xl font-bold text-white">50+</span>
+                <Heart className="w-6 h-6 text-tech-cyber-teal mr-2" />
+                <span className="text-3xl font-bold text-tech-soft-steel">50+</span>
               </div>
-              <p className="text-white/80">Lives Impacted</p>
+              <p className="text-tech-soft-steel/80">Lives Impacted</p>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
-                <span className="text-3xl font-bold text-white">15</span>
+                <span className="text-3xl font-bold text-tech-soft-steel">15</span>
               </div>
-              <p className="text-white/80">Active Projects</p>
+              <p className="text-tech-soft-steel/80">Active Projects</p>
             </div>
           </div>
         </div>
@@ -72,8 +72,8 @@ const HeroSection = () => {
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white/70 rounded-full mt-2 animate-bounce"></div>
+        <div className="w-6 h-10 border-2 border-tech-cyber-teal/70 rounded-full flex justify-center">
+          <div className="w-1 h-3 bg-tech-cyber-teal rounded-full mt-2 animate-bounce"></div>
         </div>
       </div>
     </section>

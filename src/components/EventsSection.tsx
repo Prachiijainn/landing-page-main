@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock, MapPin, Users, ArrowRight } from "lucide-react";
 import eventsImage from "@/assets/community-events.jpg";
@@ -53,15 +54,15 @@ const EventsSection = () => {
   ];
 
   return (
-    <section id="events" className="py-20 bg-community-warm">
+    <section id="events" className="py-20 bg-tech-soft-steel">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-tech-midnight-ink mb-6">
               Events & Updates
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-tech-graphite max-w-3xl mx-auto leading-relaxed">
               Stay connected with our community through regular events, workshops, and gatherings 
               designed to foster growth, learning, and meaningful connections.
             </p>
@@ -76,25 +77,25 @@ const EventsSection = () => {
                   alt="Community events and workshops" 
                   className="w-full h-[400px] object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-tech-neo-blue/40 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4">
-                    <h4 className="font-semibold text-foreground mb-1">Next Event</h4>
-                    <p className="text-sm text-muted-foreground">Community Workshop: Leadership Skills</p>
+                    <h4 className="font-semibold text-tech-midnight-ink mb-1">Next Event</h4>
+                    <p className="text-sm text-tech-graphite">Community Workshop: Leadership Skills</p>
                   </div>
                 </div>
               </div>
             </div>
             <div>
-              <h3 className="text-3xl font-bold text-foreground mb-6">
+              <h3 className="text-3xl font-bold text-tech-midnight-ink mb-6">
                 Join Our Upcoming Events
               </h3>
-              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+              <p className="text-lg text-tech-graphite mb-6 leading-relaxed">
                 Our events are designed to bring people together, share knowledge, and strengthen 
                 our community bonds. Whether you're looking to learn new skills, meet like-minded 
                 individuals, or contribute to meaningful projects, there's something for everyone.
               </p>
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+              <p className="text-lg text-tech-graphite mb-8 leading-relaxed">
                 From intimate workshops to large community gatherings, each event is an opportunity 
                 to grow, connect, and make a positive impact together.
               </p>
@@ -112,10 +113,10 @@ const EventsSection = () => {
             </h3>
             <div className="grid md:grid-cols-3 gap-6">
               {upcomingEvents.map((event, index) => (
-                <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-border hover:border-primary/30 bg-card">
+                <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-tech-neo-blue/20 hover:border-tech-cyber-teal/40 bg-white">
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
+                      <span className="text-xs font-medium text-tech-neo-blue bg-tech-neo-blue/10 px-2 py-1 rounded-full">
                         {event.type}
                       </span>
                       <div className="flex items-center text-sm text-muted-foreground">
@@ -123,27 +124,27 @@ const EventsSection = () => {
                         {event.attendees}
                       </div>
                     </div>
-                    <CardTitle className="text-xl text-foreground line-clamp-2">{event.title}</CardTitle>
+                    <CardTitle className="text-xl text-tech-midnight-ink line-clamp-2">{event.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3 mb-4">
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Calendar className="w-4 h-4 mr-2 text-primary" />
+                      <div className="flex items-center text-sm text-tech-graphite">
+                        <Calendar className="w-4 h-4 mr-2 text-tech-neo-blue" />
                         {event.date}
                       </div>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Clock className="w-4 h-4 mr-2 text-primary" />
+                      <div className="flex items-center text-sm text-tech-graphite">
+                        <Clock className="w-4 h-4 mr-2 text-tech-neo-blue" />
                         {event.time}
                       </div>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <MapPin className="w-4 h-4 mr-2 text-primary" />
+                      <div className="flex items-center text-sm text-tech-graphite">
+                        <MapPin className="w-4 h-4 mr-2 text-tech-neo-blue" />
                         {event.location}
                       </div>
                     </div>
-                    <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
+                    <p className="text-tech-graphite mb-4 text-sm leading-relaxed">
                       {event.description}
                     </p>
-                    <Button variant="outline" size="sm" className="w-full group-hover:bg-primary group-hover:text-white group-hover:border-primary">
+                    <Button variant="outline" size="sm" className="w-full group-hover:bg-tech-neo-blue group-hover:text-white group-hover:border-tech-neo-blue">
                       Register Now
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
@@ -160,16 +161,16 @@ const EventsSection = () => {
             </h3>
             <div className="grid md:grid-cols-3 gap-6">
               {pastHighlights.map((highlight, index) => (
-                <Card key={index} className="bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20 hover:shadow-lg transition-all duration-300">
+                <Card key={index} className="bg-gradient-to-br from-tech-neo-blue/5 to-tech-cyber-teal/5 border-tech-neo-blue/20 hover:shadow-lg transition-all duration-300">
                   <CardContent className="p-6">
-                    <h4 className="text-lg font-semibold text-foreground mb-3">
+                    <h4 className="text-lg font-semibold text-tech-midnight-ink mb-3">
                       {highlight.title}
                     </h4>
-                    <p className="text-muted-foreground mb-4 leading-relaxed">
+                    <p className="text-tech-graphite mb-4 leading-relaxed">
                       {highlight.description}
                     </p>
-                    <div className="flex items-center text-sm font-medium text-primary">
-                      <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                    <div className="flex items-center text-sm font-medium text-tech-neo-blue">
+                      <div className="w-2 h-2 bg-tech-neo-blue rounded-full mr-2"></div>
                       {highlight.impact}
                     </div>
                   </CardContent>
@@ -180,14 +181,14 @@ const EventsSection = () => {
 
           {/* Newsletter Signup */}
           <div className="text-center mt-16">
-            <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 md:p-12">
-              <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <div className="bg-gradient-to-r from-tech-midnight-ink to-tech-neo-blue rounded-2xl p-8 md:p-12">
+              <h3 className="text-3xl md:text-4xl font-bold text-tech-soft-steel mb-4">
                 Stay Updated
               </h3>
-              <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl text-tech-soft-steel/90 mb-8 max-w-2xl mx-auto">
                 Get the latest updates on upcoming events, community news, and opportunities to get involved.
               </p>
-              <Button variant="secondary" size="lg" className="bg-white text-primary hover:bg-white/90">
+              <Button variant="secondary" size="lg" className="bg-tech-soft-steel text-tech-midnight-ink hover:bg-tech-soft-steel/90">
                 Subscribe to Newsletter
               </Button>
             </div>
