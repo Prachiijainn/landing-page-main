@@ -9,26 +9,28 @@ const Navigation = () => {
 
   const navItems = [
     { label: "Home", href: "/" },
-    { label: "About Us", href: "/about" },
-    { label: "How to Help", href: "/help" },
-    { label: "Events", href: "/events" },
-    { label: "Stories", href: "/stories" },
-    { label: "Join Us", href: "/join" },
-    { label: "Contact", href: "/contact" },
+     { label: "Events", href: "/events" },
+    { label: "About Us", href: "/about" }
+   
   ];
 
   return (
+
     <nav className="fixed top-0 w-full bg-tech-midnight-ink/95 backdrop-blur-md border-b border-tech-cyber-teal/20 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
+          <Link to="/" className="flex-shrink-0 flex items-center space-x-3">
             <img
               src="/logo192.png"
               alt="NX Logo"
               className="h-20 w-auto"
             />
-          </div>
+            <div className="text-white text-2xl font-semibold">
+              <h1>NaedeX</h1>
+            </div>
+          </Link>
+          
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
@@ -57,6 +59,11 @@ const Navigation = () => {
               variant="ghost"
               size="sm"
               onClick={() => setIsOpen(!isOpen)}
+              className={`transition-colors duration-200 ${
+                isOpen 
+                  ? "bg-tech-cyber-teal text-tech-midnight-ink hover:bg-tech-cyber-teal/80" 
+                  : "text-tech-soft-steel hover:text-tech-cyber-teal hover:bg-tech-neo-blue/20"
+              }`}
             >
               {isOpen ? <X size={20} /> : <Menu size={20} />}
             </Button>
@@ -74,7 +81,7 @@ const Navigation = () => {
                   className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200
                     ${
                       location.pathname === item.href
-                        ? "text-tech-cyber-teal bg-tech-neo-blue/20"
+                        ? "text-white bg-tech-neo-blue/20"
                         : "text-tech-soft-steel hover:text-tech-cyber-teal"
                     }
                   `}
