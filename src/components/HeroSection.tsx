@@ -43,12 +43,17 @@ const HeroSection = () => {
           </p>
 
           {/* CTA Buttons */}
+
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up">
-            <a href="/events">
-              <Button variant="community" size="lg" className="group text-black">
-                Join Upcoming Events
-              </Button>
-            </a>
+            <Button 
+              variant="community" 
+              size="lg" 
+              className="group text-black"
+              onClick={() => window.location.href = '/events'}
+            >
+              Join Upcoming Events
+            </Button>
           </div>
 
           {/* Stats */}
