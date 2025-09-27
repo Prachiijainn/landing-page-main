@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Heart, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/community-hero.jpg";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+
   return (
 
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8">
@@ -50,7 +53,7 @@ const HeroSection = () => {
               variant="community" 
               size="lg" 
               className="group text-black"
-              onClick={() => window.location.href = '/events'}
+              onClick={() => navigate('/events')}
             >
               Join Upcoming Events
             </Button>
