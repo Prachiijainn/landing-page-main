@@ -29,22 +29,24 @@ const HeroSection = () => {
           
 
           {/* Main headline */}
-          <h1 className="text-5xl md:text-7xl font-bold text-tech-soft-steel mb-6 animate-fade-in"style={{ color: "rgb(11, 28, 91)" }}>
-            We
-            <span className="block" style={{ color: "rgb(11, 28, 91)" }}>WELCOME</span>
-            All Tech Enthusiasts
-          </h1>
 
+          <h1 className="text-5xl md:text-7xl font-bold text-tech-soft-steel mb-6 animate-fade-in" style={{ color: "rgb(11, 28, 91)" }}>
+            <span className="word-we" style={{ color: "rgb(19, 40, 118)" }}>We </span>
+            <span className="word-welcome block" style={{ background: "linear-gradient(135deg, hsl(214, 65%, 12%) 0%, hsl(170, 60%, 45%) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>WELCOME </span>
+            <span className="word-all" style={{ color: "rgb(19, 40, 118)" }}>All </span>
+            <span className="word-tech" style={{ color: "rgb(19, 40, 118)" }}>Tech </span>
+            <span className="word-enthusiasts" style={{ background: "linear-gradient(135deg, hsl(214, 65%, 12%) 0%, hsl(170, 60%, 45%) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}> Enthusiasts</span>
+          </h1>
           {/* Subheading */}
           <p className="text-xl md:text-2xl text-tech-soft-steel/90 mb-12 max-w-2xl mx-auto leading-relaxed animate-slide-up" style={{ color: "rgb(11, 28, 91)" }}>
-            An organization that believes in the power of people.
+            An organization that believes in the power of coding.
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up">
-            <a href="https://chat.whatsapp.com/FJvnsTIzJxy8iIPPHfIkJ7" target="_blank" rel="noopener noreferrer">
+            <a href="/events">
               <Button variant="community" size="lg" className="group text-black">
-                Join Our Community
+                Join Upcoming Events
               </Button>
             </a>
           </div>

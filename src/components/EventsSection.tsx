@@ -6,31 +6,13 @@ import eventsImage from "@/assets/community-events.jpg";
 const EventsSection = () => {
   const upcomingEvents = [
     {
-      title: "Community Workshop: Leadership Skills",
-      date: "Nov 15, 2024",
-      time: "2:00 PM - 4:00 PM",
-      location: "Community Center",
-      attendees: 24,
-      type: "Workshop",
-      description: "Develop essential leadership skills and learn how to inspire positive change in your community."
-    }
-  ];
-
-  const pastHighlights = [
-    {
-      title: "Annual Community Impact Summit",
-      description: "200+ attendees celebrated our collective achievements and planned for the future.",
-      impact: "3 new partnerships formed"
-    },
-    {
-      title: "Youth Mentorship Launch",
-      description: "Successfully launched our youth mentorship program with 50 mentor-mentee pairs.",
-      impact: "50 young people enrolled"
-    },
-    {
-      title: "Community Garden Project",
-      description: "Transformed an empty lot into a thriving community garden that feeds 30 families.",
-      impact: "30 families supported"
+      title: " 5 hours LIVE Hackathon",
+      date: "October 4, 2025",
+      time: "2:00 PM - 7:00 PM",
+      location: "Online",
+      attendees: 0,
+      type: "Hackathon",
+      description: "Develop essential coding skills and learn how to inspire others with your ideas."
     }
   ];
 
@@ -50,6 +32,7 @@ const EventsSection = () => {
           </div>
 
           {/* Featured Event */}
+
           <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
             <div className="relative">
               <div className="rounded-2xl overflow-hidden shadow-lg">
@@ -62,10 +45,16 @@ const EventsSection = () => {
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4">
                     <h4 className="font-semibold text-tech-midnight-ink mb-1">Next Event</h4>
-                    <p className="text-sm text-tech-graphite">Community Workshop: Leadership Skills</p>
+                    <p className="text-sm text-tech-graphite">5 hours LIVE HACKATHON</p>
                   </div>
                 </div>
               </div>
+            </div>
+            <div className="text-tech-midnight-ink">
+              <h1 className="text-2xl md:text-3xl font-semibold mb-4">Join our Events. Learn and foster coding.</h1>
+              <p className="text-lg text-tech-graphite leading-relaxed">
+                Connect with fellow developers, participate in exciting challenges, and grow your skills in our vibrant community events.
+              </p>
             </div>
           </div>
 
@@ -107,7 +96,7 @@ const EventsSection = () => {
                     <p className="text-tech-graphite mb-4 text-sm leading-relaxed">
                       {event.description}
                     </p>
-                    <Button variant="outline" size="sm" className="w-full group-hover:bg-tech-neo-blue group-hover:text-white group-hover:border-tech-neo-blue">
+                    <Button variant="outline" size="sm" className="bg-tech-neo-blue text-white w-full group-hover:bg-tech-neo-blue group-hover:text-white group-hover:border-tech-neo-blue">
                       Register Now
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>

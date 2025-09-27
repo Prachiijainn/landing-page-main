@@ -91,9 +91,14 @@ const Navigation = () => {
                 </Link>
               ))}
               <div className="pt-2">
-                <Button variant="community" size="sm" className="w-full text-white">
+                <a href="https://chat.whatsapp.com/FJvnsTIzJxy8iIPPHfIkJ7"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button variant="community" size="sm" className="w-full text-white" >
                   Join Now
                 </Button>
+                </a>
               </div>
             </div>
           </div>
