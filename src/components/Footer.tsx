@@ -13,10 +13,10 @@ import {
 } from "lucide-react";
 
 const Footer = () => {
-  // const quickLinks = [
-  //   { label: "About Us", href: "/about" },
-  //   { label: "Events", href: "/events" }
-  // ];
+  const quickLinks = [
+    { label: "About Us", href: "/about" },
+    { label: "Events", href: "/events" }
+  ];
   const socialLinks = [
     { icon: MessageCircle, label: "WhatsApp", href: "https://chat.whatsapp.com/FJvnsTIzJxy8iIPPHfIkJ7" },
     { icon: Instagram, label: "Instagram", href: "https://www.instagram.com/naedex.org_" },
@@ -62,7 +62,7 @@ const Footer = () => {
             </div>
 
             {/* Quick Links */}
-            {/* <div>
+            <div>
               <h4 className="text-lg font-semibold mb-4 text-tech-soft-steel">Quick Links</h4>
               <ul className="space-y-3">
                 {quickLinks.map((link, index) => (
@@ -76,7 +76,7 @@ const Footer = () => {
                   </li>
                 ))}
               </ul>
-            </div> */}
+            </div>
           </div>
 
           {/* Bottom Bar */}

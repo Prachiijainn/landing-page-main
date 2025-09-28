@@ -51,7 +51,7 @@ const EventsSection = () => {
             </div>
             <div className="text-tech-midnight-ink">
               <h1 className="text-2xl md:text-3xl font-bold mb-4">NaedeX Represents</h1>
-              <p className="text-lg text-tech-graphite leading-relaxed">
+              <p className="text-lg font-semibold text-tech-graphite leading-relaxed">
                 Innovation and creativity! <br />
                 Join our 5-hour LIVE Hackathon on Oct 4, 2025 (10 AM – 3 PM), right from Discord. Build, innovate, and compete with your team of 4.<br /><br />
 
@@ -59,7 +59,7 @@ const EventsSection = () => {
 
                 Only 12 slots | ₹40 per team
               </p>
-              <p className="font-semibold text-lg">Register now</p>
+              <p className="font-bold text-lg">Register now</p>
             </div>
           </div>
 
