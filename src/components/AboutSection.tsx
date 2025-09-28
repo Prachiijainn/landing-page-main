@@ -36,7 +36,7 @@ const AboutSection = () => {
             </h2>
             <p className="text-xl text-tech-graphite max-w-3xl mx-auto leading-relaxed">
               We believe that strong communities are built on connection, compassion, and collective action. 
-              Our journey began with a simple idea: everyone deserves to belong to something meaningful.
+              Our journey began with a simple idea: everyone deserves to code.
             </p>
           </div>
 
@@ -44,22 +44,21 @@ const AboutSection = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
             <div>
               <h3 className="text-3xl font-bold text-tech-midnight-ink mb-6">
-                Building Bridges, Not Walls
+                Empowering Coders, Building Futures
               </h3>
               <div className="space-y-4 text-lg text-tech-graphite">
                 <p>
-                  What started as a small group of neighbors wanting to make a difference has grown into 
-                  a thriving community of changemakers, dreamers, and doers. We've learned that real change 
-                  happens when people come together with shared purpose and genuine care for one another.
+                  What started in 2024 as a vision by Prabhat and Prachi to make coding more accessible has rapidly grown into 
+                  a thriving community of 400+ programmers, learners, and tech enthusiasts. We've learned that real growth 
+                  happens when coders collaborate, share knowledge, and support each other's journeys.
                 </p>
                 <p>
-                  Our community is more than just a network – it's a family. We celebrate victories together, 
-                  support each other through challenges, and work side by side to create the positive change 
-                  we want to see in the world.
+                  Our community is more than just a network – it's a collaborative ecosystem. We celebrate breakthroughs together, 
+                  troubleshoot challenges collectively, and mentor each other to achieve greater heights in our coding careers.
                 </p>
                 <p>
-                  Every story matters, every voice counts, and every person has something valuable to contribute. 
-                  This is the foundation upon which we build our community and our future.
+                  Every developer has a unique journey, every question drives learning, and every contribution enhances our collective knowledge. 
+                  This is the foundation upon which we build our coding community and shape the future of technology.
                 </p>
               </div>
             </div>

@@ -8,8 +8,8 @@ const EventsSection = () => {
     {
       title: " 5 hours LIVE Hackathon",
       date: "October 4, 2025",
-      time: "2:00 PM - 7:00 PM",
-      location: "Online",
+      time: "10:00 AM - 15:00 PM",
+      location: "Discord",
       attendees: 0,
       type: "Hackathon",
       description: "Develop essential coding skills and learn how to inspire others with your ideas."
@@ -37,24 +37,29 @@ const EventsSection = () => {
             <div className="relative">
               <div className="rounded-2xl overflow-hidden shadow-lg">
                 <img 
-                  src={eventsImage} 
+                  src="/Hackathon.png" 
                   alt="Community events and workshops" 
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-tech-neo-blue/40 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
-                  <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4">
+                  {/* <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4">
                     <h4 className="font-semibold text-tech-midnight-ink mb-1">Next Event</h4>
-                    <p className="text-sm text-tech-graphite">5 hours LIVE HACKATHON</p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
             <div className="text-tech-midnight-ink">
-              <h1 className="text-2xl md:text-3xl font-semibold mb-4">Join our Events. Learn and foster coding.</h1>
+              <h1 className="text-2xl md:text-3xl font-bold mb-4">NaedeX Represents</h1>
               <p className="text-lg text-tech-graphite leading-relaxed">
-                Connect with fellow developers, participate in exciting challenges, and grow your skills in our vibrant community events.
+                Innovation and creativity! <br />
+                Join our 5-hour LIVE Hackathon on Oct 4, 2025 (10 AM – 3 PM), right from Discord. Build, innovate, and compete with your team of 4.<br /><br />
+
+                Themes: Open Innovation · Smart Campus · Sustainability · Digital Well-Being · Fun & Games<br /><br />
+
+                Only 12 slots | ₹40 per team
               </p>
+              <p className="font-semibold text-lg">Register now</p>
             </div>
           </div>
 
@@ -96,10 +101,21 @@ const EventsSection = () => {
                     <p className="text-tech-graphite mb-4 text-sm leading-relaxed">
                       {event.description}
                     </p>
-                    <Button variant="outline" size="sm" className="bg-tech-neo-blue text-white w-full group-hover:bg-tech-neo-blue group-hover:text-white group-hover:border-tech-neo-blue">
-                      Register Now
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
+                    <a 
+                      href="https://forms.gle/VNjAxxM9ajkLJTpp9" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="w-full"
+                    >
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="bg-tech-neo-blue text-white w-full group-hover:bg-tech-neo-blue group-hover:text-white group-hover:border-tech-neo-blue"
+                      >
+                        Register Now
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </a>
                   </CardContent>
                 </Card>
               ))}

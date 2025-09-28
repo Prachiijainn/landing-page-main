@@ -26,7 +26,7 @@ const Navigation = () => {
               alt="NX Logo"
               className="h-20 w-auto"
             />
-            <div className="text-white text-2xl font-semibold">
+            <div className="text-2xl font-semibold bg-gradient-to-r from-sky-400 to-white bg-clip-text text-transparent">
               <h1>NaedeX</h1>
             </div>
           </Link>
