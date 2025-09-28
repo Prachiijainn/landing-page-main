@@ -53,7 +53,7 @@ const EventsSection = () => {
               <h1 className="text-2xl md:text-3xl font-bold mb-4">NaedeX Represents</h1>
               <p className="text-lg font-semibold text-tech-graphite leading-relaxed">
                 Innovation and creativity! <br />
-                Join our 5-hour LIVE Hackathon on Oct 4, 2025 (10 AM – 3 PM), right from Discord. Build, innovate, and compete with your team of 4.<br /><br />
+                Join our 5-hour LIVE (VIBE CODE) Hackathon on Oct 4, 2025 (10 AM – 3 PM), right from Discord. Build, innovate, and compete with your team of 4.<br /><br />
 
                 Themes: Open Innovation · Smart Campus · Sustainability · Digital Well-Being · Fun & Games<br /><br />
 
