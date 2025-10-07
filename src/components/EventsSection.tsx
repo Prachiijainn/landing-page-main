@@ -10,7 +10,7 @@ const EventsSection = () => {
       date: "October 4, 2025",
       time: "10:00 AM - 15:00 PM",
       location: "Discord",
-      attendees: 17+,
+      attendees: "17+",
       type: "Hackathon",
       description: "Develop essential coding skills and learn how to inspire others with your ideas."
     }
