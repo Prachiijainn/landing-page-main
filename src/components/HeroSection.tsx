@@ -52,7 +52,7 @@ const HeroSection = () => {
             <Button 
               variant="community" 
               size="lg" 
-              className="group text-black"
+              className="group text-white"
               onClick={() => navigate('/events')}
             >
               Join Upcoming Events
