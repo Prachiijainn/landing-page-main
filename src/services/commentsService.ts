@@ -130,7 +130,7 @@ class CommentsService {
       }
 
       let liked = false;
-      
+
       if (existingLike) {
         // Unlike - remove the like
         const { error: deleteError } = await supabase
@@ -142,7 +142,7 @@ class CommentsService {
           console.error('Error removing comment like:', deleteError);
           return { success: false, liked: false, count: 0, message: 'Failed to unlike comment' };
         }
-        
+
         liked = false;
       } else {
         // Like - add the like
@@ -157,7 +157,7 @@ class CommentsService {
           console.error('Error adding comment like:', insertError);
           return { success: false, liked: false, count: 0, message: 'Failed to like comment' };
         }
-        
+
         liked = true;
       }
 
@@ -168,7 +168,7 @@ class CommentsService {
         .eq('comment_id', commentId);
 
       const likeCount = countError ? 0 : (count || 0);
-      
+
       return {
         success: true,
         liked,
@@ -181,48 +181,15 @@ class CommentsService {
     }
   }
 
-  // Mock implementation
+  // Mock implementation - returns empty comments array
   private getMockComments(itemId: string, itemType: 'project' | 'story'): Comment[] {
     const key = `${itemType}-${itemId}`;
-    
+
+    // Initialize empty comments array if not exists
     if (!this.mockComments.has(key)) {
-      // Generate some mock comments
-      const mockData: Comment[] = [
-        {
-          id: '1',
-          user_email: 'sarah@example.com',
-          user_name: 'Sarah Johnson',
-          item_id: itemId,
-          item_type: itemType,
-          text: 'Amazing work! Really inspiring to see this come together 🎉',
-          created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-          likes_count: 12
-        },
-        {
-          id: '2',
-          user_email: 'mike@example.com',
-          user_name: 'Mike Chen',
-          item_id: itemId,
-          item_type: itemType,
-          text: 'Wish I could have been there! Looks like an incredible event.',
-          created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-          likes_count: 8
-        },
-        {
-          id: '3',
-          user_email: 'alex@example.com',
-          user_name: 'Alex Rivera',
-          item_id: itemId,
-          item_type: itemType,
-          text: 'Great turnout! Looking forward to the next one 🚀',
-          created_at: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
-          likes_count: 15
-        }
-      ];
-      
-      this.mockComments.set(key, mockData);
+      this.mockComments.set(key, []);
     }
-    
+
     return this.mockComments.get(key) || [];
   }
 
@@ -235,7 +202,7 @@ class CommentsService {
   ): { success: boolean; comment: Comment; message: string } {
     const key = `${itemType}-${itemId}`;
     const comments = this.mockComments.get(key) || [];
-    
+
     const newComment: Comment = {
       id: Date.now().toString(),
       user_email: userEmail,
@@ -246,10 +213,10 @@ class CommentsService {
       created_at: new Date().toISOString(),
       likes_count: 0
     };
-    
+
     comments.push(newComment);
     this.mockComments.set(key, comments);
-    
+
     console.log('🔄 Mock comment added:', {
       itemType,
       itemId,
@@ -257,7 +224,7 @@ class CommentsService {
       text: text.substring(0, 50) + '...',
       timestamp: new Date().toISOString()
     });
-    
+
     return {
       success: true,
       comment: newComment,
@@ -272,17 +239,17 @@ class CommentsService {
       if (commentIndex !== -1) {
         comments.splice(commentIndex, 1);
         this.mockComments.set(key, comments);
-        
+
         console.log('🔄 Mock comment deleted:', {
           commentId,
           userEmail,
           timestamp: new Date().toISOString()
         });
-        
+
         return { success: true, message: 'Comment deleted successfully (Mock mode)' };
       }
     }
-    
+
     return { success: false, message: 'Comment not found or unauthorized' };
   }
 
@@ -297,15 +264,15 @@ class CommentsService {
         // Simple mock: just increment/decrement likes
         const currentLikes = comment.likes_count || 0;
         const wasLiked = currentLikes > 0 && Math.random() > 0.5; // Mock previous like state
-        
+
         if (wasLiked) {
           comment.likes_count = Math.max(0, currentLikes - 1);
         } else {
           comment.likes_count = currentLikes + 1;
         }
-        
+
         const liked = !wasLiked;
-        
+
         console.log('🔄 Mock comment like toggled:', {
           commentId,
           userEmail,
@@ -313,7 +280,7 @@ class CommentsService {
           count: comment.likes_count,
           timestamp: new Date().toISOString()
         });
-        
+
         return {
           success: true,
           liked,
@@ -322,7 +289,7 @@ class CommentsService {
         };
       }
     }
-    
+
     return { success: false, liked: false, count: 0, message: 'Comment not found' };
   }
 }

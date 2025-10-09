@@ -19,6 +19,8 @@ import LikeButton from '@/components/LikeButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { commentsService, type Comment } from '@/services/commentsService';
 import { getUserDisplayName, getUserInitials } from '../utils/userUtils';
+import MediaViewer from './MediaViewer';
+import { isVideo } from '../utils/mediaUtils';
 import { useToast } from '@/components/ui/use-toast';
 import { shareStory } from '@/utils/shareUtils';
 
@@ -275,11 +277,14 @@ const InstagramViewer = ({ story, initialImageIndex = 0, isOpen, onClose }: Inst
             </>
           )}
 
-          {/* Main Image */}
-          <img
+          {/* Main Media */}
+          <MediaViewer
             src={images[currentImageIndex]}
             alt={`${story.title} ${currentImageIndex + 1}`}
             className="max-w-full max-h-full object-contain"
+            controls={isVideo(images[currentImageIndex])}
+            muted={true}
+            autoPlay={false}
           />
 
           {/* Image Dots Indicator */}

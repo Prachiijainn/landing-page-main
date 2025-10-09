@@ -2,8 +2,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Users, X, Share2 } from 'lucide-react';
 import LikeButton from '@/components/LikeButton';
+import MediaViewer from './MediaViewer';
 import { useToast } from '@/components/ui/use-toast';
 import { shareStory } from '@/utils/shareUtils';
+import { isVideo } from '../utils/mediaUtils';
 
 interface StoryDetailModalProps {
   story: any;
@@ -56,10 +58,12 @@ const StoryDetailModal = ({ story, isOpen, onClose, storyLikes }: StoryDetailMod
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="relative">
-          <img 
+          <MediaViewer
             src={story.image} 
             alt={story.title}
             className="w-full h-48 md:h-80 object-cover"
+            controls={isVideo(story.image)}
+            muted={true}
           />
           <Button
             variant="ghost"
@@ -127,15 +131,17 @@ const StoryDetailModal = ({ story, isOpen, onClose, storyLikes }: StoryDetailMod
           {story.images && story.images.length > 1 && (
             <div className="mb-6">
               <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3">
-                Event Photos ({story.images.length})
+                Event Media ({story.images.length})
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
                 {story.images.map((image: string, index: number) => (
                   <div key={index} className="relative group cursor-pointer">
-                    <img
+                    <MediaViewer
                       src={image}
                       alt={`${story.title} ${index + 1}`}
                       className="w-full h-24 md:h-32 object-cover rounded-lg group-hover:opacity-90 transition-opacity"
+                      controls={isVideo(image)}
+                      muted={true}
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
                       <span className="text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">

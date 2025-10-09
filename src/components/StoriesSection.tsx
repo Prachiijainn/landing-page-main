@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Users, Eye, Share2, X, Grid, List } from "lucide-react";
 import LikeButton from "@/components/LikeButton";
-import ImageGallery from "@/components/ImageGallery";
+import MediaViewer from "@/components/MediaViewer";
 import InstagramViewer from "@/components/InstagramViewer";
 import StoryDetailModal from "@/components/StoryDetailModal";
 import { storyLikesService } from "@/services/storyLikesService";
+import { isVideo } from "../utils/mediaUtils";
 
 const StoriesSection = () => {
   const [selectedStory, setSelectedStory] = useState<any>(null);
@@ -29,7 +30,12 @@ const StoriesSection = () => {
       images: [
         "/team-aman.jpg",
         "/r&d-dynasty.jpg",
-        "/pheonix-rise.jpg"
+        "/pheonix-rise.jpg",
+        "/team-nakul2.jpeg",
+        "/codde.jpeg",
+        "/video1.jpeg",
+        "/l.mp4",
+        "/ll.mp4"
       ],
       description: "An incredible evening of networking, learning, and innovation. Our community came together for 5 HOUR LIVE HACKATHON.",
       highlights: ["4 inspiring developers", "15+ networking connections made"],
@@ -163,11 +169,14 @@ const StoriesSection = () => {
                   >
                     <div className="relative overflow-hidden rounded-xl md:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 bg-white">
                       <div className="relative overflow-hidden">
-                        <img
+                        <MediaViewer
                           src={image}
                           alt={`${story.title} ${imageIndex + 1}`}
                           className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
                           style={{ aspectRatio: Math.random() > 0.5 ? '4/5' : Math.random() > 0.5 ? '3/4' : '1/1' }}
+                          controls={isVideo(image)}
+                          muted={true}
+                          loop={isVideo(image)}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -232,10 +241,13 @@ const StoriesSection = () => {
                   }}
                 >
                   <div className="relative overflow-hidden">
-                    <img
+                    <MediaViewer
                       src={story.image}
                       alt={story.title}
                       className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                      controls={isVideo(story.image)}
+                      muted={true}
+                      loop={isVideo(story.image)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <Badge className={`absolute top-4 left-4 ${getCategoryColor(story.category)} border-0`}>
@@ -341,10 +353,12 @@ const StoriesSection = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="relative">
-              <img
+              <MediaViewer
                 src={selectedStory.image}
                 alt={selectedStory.title}
                 className="w-full h-64 md:h-80 object-cover"
+                controls={isVideo(selectedStory.image)}
+                muted={true}
               />
               <Button
                 variant="ghost"
