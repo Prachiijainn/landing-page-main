@@ -6,13 +6,13 @@ import eventsImage from "@/assets/community-events.jpg";
 const EventsSection = () => {
   const upcomingEvents = [
     {
-      title: " 5 hours LIVE Hackathon",
-      date: "October 4, 2025",
-      time: "10:00 AM - 15:00 PM",
-      location: "Discord",
-      attendees: "17+",
-      type: "Hackathon",
-      description: "Develop essential coding skills and learn how to inspire others with your ideas."
+      title: "Agentic AI & Workflows",
+      date: "March 13, 2026",
+      time: "1:40 PM - 4:25 PM",
+      location: "Smart Classroom, Block-2 Emerging Technologies, CEC, CGC Landran",
+      attendees: "25",
+      type: "Hand-On Session",
+      description: "An introduction to the world of Agentic AI & Workflows. You'll learn the fundamentals of AI and how to use it to create intelligent applications as well as automate real-world tasks."
     }
   ];
 
@@ -26,7 +26,7 @@ const EventsSection = () => {
               Events & Updates
             </h2>
             <p className="text-xl text-tech-graphite max-w-3xl mx-auto leading-relaxed">
-              Stay connected with our community through regular events, workshops, and gatherings 
+              Stay connected with our community through regular events, workshops, and gatherings
               designed to foster growth, learning, and meaningful connections.
             </p>
           </div>
@@ -34,32 +34,37 @@ const EventsSection = () => {
           {/* Featured Event */}
 
           <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
-            <div className="relative">
-              <div className="rounded-2xl overflow-hidden shadow-lg">
-                <img 
-                  src="/Hackathon.png" 
-                  alt="Community events and workshops" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-tech-neo-blue/40 to-transparent" />
-                <div className="absolute bottom-6 left-6 right-6">
-                  {/* <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4">
-                    <h4 className="font-semibold text-tech-midnight-ink mb-1">Next Event</h4>
-                  </div> */}
-                </div>
-              </div>
+            <div className="relative group overflow-hidden flex items-center justify-center order-2 lg:order-1">
+              <img
+                src="/2.png"
+                alt="Hands-On Session"
+                className="w-full h-auto max-h-[600px] object-contain transition-transform duration-700 group-hover:scale-110"
+              />
             </div>
-            <div className="text-tech-midnight-ink">
-              <h1 className="text-2xl md:text-3xl font-bold mb-4">NaedeX Represents</h1>
-              <p className="text-lg font-semibold text-tech-graphite leading-relaxed">
-                Innovation and creativity! <br />
-                Join our 5-hour LIVE (VIBE CODE) Hackathon on Oct 4, 2025 (10 AM – 3 PM), right from Discord. Build, innovate, and compete with your team of 4.<br /><br />
 
-                Themes: Open Innovation · Smart Campus · Sustainability · Digital Well-Being · Fun & Games<br /><br />
+            <div className="text-tech-midnight-ink order-1 lg:order-2">
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-tech-neo-blue/10 text-tech-neo-blue text-xs font-semibold mb-4 w-fit">
+                HANDS-ON SESSION
+              </div>
+              <h1 className="text-3xl md:text-5xl font-bold mb-6">Agentic AI & Workflows</h1>
+              <p className="text-lg text-tech-graphite leading-relaxed mb-8">
+                 Join our hands-on session on <span className="text-tech-neo-blue font-bold">March 13, 2026</span> (1:40 PM – 4:25 PM) at Smart Classroom, Block-2 Emerging Technologies, CEC, CGC Landran.<br /><br />
 
-                Only 12 slots | ₹40 per team
+                <span className="flex items-center gap-2 font-semibold">
+                  <span className="h-2 w-2 rounded-full bg-tech-cyber-teal animate-pulse" />
+                  Only 25 seats | Free registration
+                </span>
               </p>
-              <p className="font-bold text-lg">Register now</p>
+
+              <a
+                href="https://forms.gle/rasaNeGTAwa1r8gE6"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button className="bg-tech-neo-blue hover:bg-tech-neo-blue/90 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-tech-neo-blue/30 transition-all">
+                  Register Now <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </a>
             </div>
           </div>
 
@@ -101,15 +106,15 @@ const EventsSection = () => {
                     <p className="text-tech-graphite mb-4 text-sm leading-relaxed">
                       {event.description}
                     </p>
-                    <a 
-                      href="https://forms.gle/VNjAxxM9ajkLJTpp9" 
-                      target="_blank" 
+                    <a
+                      href="https://forms.gle/rasaNeGTAwa1r8gE6"
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="w-full"
                     >
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         className="bg-tech-neo-blue text-white w-full group-hover:bg-tech-neo-blue group-hover:text-white group-hover:border-tech-neo-blue"
                       >
                         Register Now

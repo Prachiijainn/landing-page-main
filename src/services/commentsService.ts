@@ -1,4 +1,19 @@
-import { supabase, hasValidSupabaseConfig } from '@/lib/supabase';
+import { db } from "@/lib/firebase";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  updateDoc,
+  doc,
+  deleteDoc,
+  orderBy,
+  getDoc,
+  serverTimestamp,
+  increment,
+  writeBatch
+} from "firebase/firestore";
 
 export interface Comment {
   id: string;
@@ -7,36 +22,36 @@ export interface Comment {
   item_id: string;
   item_type: 'project' | 'story';
   text: string;
-  created_at: string;
+  created_at: any;
   likes_count?: number;
 }
 
 class CommentsService {
-  private mockComments: Map<string, Comment[]> = new Map();
+  private get collection() {
+    return collection(db, 'comments');
+  }
+
+  private get likesCollection() {
+    return collection(db, 'comment_likes');
+  }
 
   // Get comments for an item
   async getComments(itemId: string, itemType: 'project' | 'story'): Promise<Comment[]> {
-    if (!hasValidSupabaseConfig) {
-      return this.getMockComments(itemId, itemType);
-    }
-
     try {
-      const { data, error } = await supabase
-        .from('comments')
-        .select('*')
-        .eq('item_id', itemId)
-        .eq('item_type', itemType)
-        .order('created_at', { ascending: true });
-
-      if (error) {
-        console.error('Error fetching comments:', error);
-        return this.getMockComments(itemId, itemType);
-      }
-
-      return data || [];
+      const q = query(
+        this.collection,
+        where('item_id', '==', itemId),
+        where('item_type', '==', itemType),
+        orderBy('created_at', 'asc')
+      );
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Comment[];
     } catch (error) {
-      console.error('Error in getComments:', error);
-      return this.getMockComments(itemId, itemType);
+      console.error('Error fetching comments:', error);
+      return [];
     }
   }
 
@@ -48,57 +63,44 @@ class CommentsService {
     itemType: 'project' | 'story',
     text: string
   ): Promise<{ success: boolean; comment?: Comment; message: string }> {
-    if (!hasValidSupabaseConfig) {
-      return this.addMockComment(userEmail, userName, itemId, itemType, text);
-    }
-
     try {
-      const { data, error } = await supabase
-        .from('comments')
-        .insert({
-          user_email: userEmail,
-          user_name: userName,
-          item_id: itemId,
-          item_type: itemType,
-          text: text
-        })
-        .select()
-        .single();
+      const commentData = {
+        user_email: userEmail,
+        user_name: userName,
+        item_id: itemId,
+        item_type: itemType,
+        text: text,
+        created_at: serverTimestamp(),
+        likes_count: 0
+      };
 
-      if (error) {
-        console.error('Error adding comment:', error);
-        return this.addMockComment(userEmail, userName, itemId, itemType, text);
-      }
+      const docRef = await addDoc(this.collection, commentData);
 
       return {
         success: true,
-        comment: data,
+        comment: { id: docRef.id, ...commentData } as Comment,
         message: 'Comment added successfully'
       };
     } catch (error) {
       console.error('Error in addComment:', error);
-      return this.addMockComment(userEmail, userName, itemId, itemType, text);
+      return {
+        success: false,
+        message: 'Failed to add comment'
+      };
     }
   }
 
   // Delete a comment
   async deleteComment(commentId: string, userEmail: string): Promise<{ success: boolean; message: string }> {
-    if (!hasValidSupabaseConfig) {
-      return this.deleteMockComment(commentId, userEmail);
-    }
-
     try {
-      const { error } = await supabase
-        .from('comments')
-        .delete()
-        .eq('id', commentId)
-        .eq('user_email', userEmail);
+      const commentRef = doc(db, 'comments', commentId);
+      const commentSnap = await getDoc(commentRef);
 
-      if (error) {
-        console.error('Error deleting comment:', error);
-        return { success: false, message: 'Failed to delete comment' };
+      if (!commentSnap.exists() || commentSnap.data().user_email !== userEmail) {
+        return { success: false, message: 'Comment not found or unauthorized' };
       }
 
+      await deleteDoc(commentRef);
       return { success: true, message: 'Comment deleted successfully' };
     } catch (error) {
       console.error('Error in deleteComment:', error);
@@ -111,186 +113,48 @@ class CommentsService {
     commentId: string,
     userEmail: string
   ): Promise<{ success: boolean; liked: boolean; count: number; message: string }> {
-    if (!hasValidSupabaseConfig) {
-      return this.toggleMockCommentLike(commentId, userEmail);
-    }
-
     try {
-      // Check if user already liked this comment
-      const { data: existingLike, error: checkError } = await supabase
-        .from('comment_likes')
-        .select('id')
-        .eq('comment_id', commentId)
-        .eq('user_email', userEmail)
-        .single();
+      const likeId = `${commentId}_${userEmail.replace(/[@.]/g, '_')}`;
+      const likeRef = doc(db, 'comment_likes', likeId);
+      const likeSnap = await getDoc(likeRef);
+      const commentRef = doc(db, 'comments', commentId);
 
-      if (checkError && checkError.code !== 'PGRST116') {
-        console.error('Error checking comment like:', checkError);
-        return this.toggleMockCommentLike(commentId, userEmail);
-      }
-
+      const batch = writeBatch(db);
       let liked = false;
+      let countChange = 0;
 
-      if (existingLike) {
-        // Unlike - remove the like
-        const { error: deleteError } = await supabase
-          .from('comment_likes')
-          .delete()
-          .eq('id', existingLike.id);
-
-        if (deleteError) {
-          console.error('Error removing comment like:', deleteError);
-          return { success: false, liked: false, count: 0, message: 'Failed to unlike comment' };
-        }
-
+      if (likeSnap.exists()) {
+        batch.delete(likeRef);
+        batch.update(commentRef, { likes_count: increment(-1) });
         liked = false;
+        countChange = -1;
       } else {
-        // Like - add the like
-        const { error: insertError } = await supabase
-          .from('comment_likes')
-          .insert({
-            comment_id: commentId,
-            user_email: userEmail
-          });
-
-        if (insertError) {
-          console.error('Error adding comment like:', insertError);
-          return { success: false, liked: false, count: 0, message: 'Failed to like comment' };
-        }
-
+        batch.set(likeRef, {
+          comment_id: commentId,
+          user_email: userEmail,
+          created_at: serverTimestamp()
+        });
+        batch.update(commentRef, { likes_count: increment(1) });
         liked = true;
+        countChange = 1;
       }
+
+      await batch.commit();
 
       // Get updated count
-      const { count, error: countError } = await supabase
-        .from('comment_likes')
-        .select('*', { count: 'exact', head: true })
-        .eq('comment_id', commentId);
-
-      const likeCount = countError ? 0 : (count || 0);
+      const updatedSnap = await getDoc(commentRef);
+      const newCount = updatedSnap.data()?.likes_count || 0;
 
       return {
         success: true,
         liked,
-        count: likeCount,
+        count: newCount,
         message: liked ? 'Comment liked!' : 'Comment unliked!'
       };
     } catch (error) {
       console.error('Error in toggleCommentLike:', error);
-      return this.toggleMockCommentLike(commentId, userEmail);
+      return { success: false, liked: false, count: 0, message: 'An error occurred' };
     }
-  }
-
-  // Mock implementation - returns empty comments array
-  private getMockComments(itemId: string, itemType: 'project' | 'story'): Comment[] {
-    const key = `${itemType}-${itemId}`;
-
-    // Initialize empty comments array if not exists
-    if (!this.mockComments.has(key)) {
-      this.mockComments.set(key, []);
-    }
-
-    return this.mockComments.get(key) || [];
-  }
-
-  private addMockComment(
-    userEmail: string,
-    userName: string,
-    itemId: string,
-    itemType: 'project' | 'story',
-    text: string
-  ): { success: boolean; comment: Comment; message: string } {
-    const key = `${itemType}-${itemId}`;
-    const comments = this.mockComments.get(key) || [];
-
-    const newComment: Comment = {
-      id: Date.now().toString(),
-      user_email: userEmail,
-      user_name: userName,
-      item_id: itemId,
-      item_type: itemType,
-      text: text,
-      created_at: new Date().toISOString(),
-      likes_count: 0
-    };
-
-    comments.push(newComment);
-    this.mockComments.set(key, comments);
-
-    console.log('🔄 Mock comment added:', {
-      itemType,
-      itemId,
-      userName,
-      text: text.substring(0, 50) + '...',
-      timestamp: new Date().toISOString()
-    });
-
-    return {
-      success: true,
-      comment: newComment,
-      message: 'Comment added successfully (Mock mode)'
-    };
-  }
-
-  private deleteMockComment(commentId: string, userEmail: string): { success: boolean; message: string } {
-    // Find and remove comment from all mock data
-    for (const [key, comments] of this.mockComments.entries()) {
-      const commentIndex = comments.findIndex(c => c.id === commentId && c.user_email === userEmail);
-      if (commentIndex !== -1) {
-        comments.splice(commentIndex, 1);
-        this.mockComments.set(key, comments);
-
-        console.log('🔄 Mock comment deleted:', {
-          commentId,
-          userEmail,
-          timestamp: new Date().toISOString()
-        });
-
-        return { success: true, message: 'Comment deleted successfully (Mock mode)' };
-      }
-    }
-
-    return { success: false, message: 'Comment not found or unauthorized' };
-  }
-
-  private toggleMockCommentLike(
-    commentId: string,
-    userEmail: string
-  ): { success: boolean; liked: boolean; count: number; message: string } {
-    // Find the comment and toggle its like count
-    for (const [key, comments] of this.mockComments.entries()) {
-      const comment = comments.find(c => c.id === commentId);
-      if (comment) {
-        // Simple mock: just increment/decrement likes
-        const currentLikes = comment.likes_count || 0;
-        const wasLiked = currentLikes > 0 && Math.random() > 0.5; // Mock previous like state
-
-        if (wasLiked) {
-          comment.likes_count = Math.max(0, currentLikes - 1);
-        } else {
-          comment.likes_count = currentLikes + 1;
-        }
-
-        const liked = !wasLiked;
-
-        console.log('🔄 Mock comment like toggled:', {
-          commentId,
-          userEmail,
-          liked,
-          count: comment.likes_count,
-          timestamp: new Date().toISOString()
-        });
-
-        return {
-          success: true,
-          liked,
-          count: comment.likes_count,
-          message: liked ? 'Comment liked!' : 'Comment unliked!'
-        };
-      }
-    }
-
-    return { success: false, liked: false, count: 0, message: 'Comment not found' };
   }
 }
 

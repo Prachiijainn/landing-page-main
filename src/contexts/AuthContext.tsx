@@ -1,7 +1,22 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { supabase, hasValidSupabaseConfig } from '@/lib/supabase';
-import { mockAuthService } from '@/services/mockAuthService';
-import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { auth, db } from '@/lib/firebase';
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  type User as FirebaseUser
+} from 'firebase/auth';
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp,
+  collection,
+  query,
+  where,
+  getDocs
+} from 'firebase/firestore';
 import { emailPrefixToName } from '../utils/userUtils';
 
 interface User {
@@ -67,181 +82,164 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // Get user profile with caching - ultra fast and reliable
-  const getUserProfile = async (supabaseUser: SupabaseUser, useCache: boolean = true): Promise<User | null> => {
+
+  // Get user profile with MongoDB - ultra fast and reliable
+  const getUserProfile = async (firebaseUser: FirebaseUser, useCache: boolean = true): Promise<User | null> => {
     // Check cache first for instant loading
     if (useCache) {
       const cached = getCachedUserProfile();
-      if (cached && cached.id === supabaseUser.id) {
-        console.log('⚡ Using cached profile:', cached.role);
+      if (cached && cached.id === firebaseUser.uid) {
         return cached;
       }
     }
 
     try {
-      // Ultra-fast query - only get role
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', supabaseUser.id)
-        .single();
+      const profileRef = doc(db, 'profiles', firebaseUser.uid);
+      const profileSnap = await getDoc(profileRef);
+
+      let profileData = profileSnap.exists() ? profileSnap.data() : null;
+
+      if (profileSnap.exists()) {
+        console.log(`Profile found for UID ${firebaseUser.uid}. Role: ${profileData?.role}`);
+        // If they are a 'user' but might have been an 'admin' in Supabase, try to elevate them
+        if (profileData?.role === 'user' && firebaseUser.email) {
+          const searchEmail = firebaseUser.email.toLowerCase();
+          const q = query(collection(db, 'profiles'), where('email', '==', searchEmail), where('role', '==', 'admin'));
+          const qSnap = await getDocs(q);
+          if (!qSnap.empty) {
+            console.log(`User already had a profile but was found as Admin in migrated data. Elevating...`);
+            profileData = { ...profileData, role: 'admin' };
+            await setDoc(doc(db, 'profiles', firebaseUser.uid), {
+              ...profileData,
+              role: 'admin',
+              updated_at: serverTimestamp()
+            }, { merge: true });
+          }
+        }
+      } else if (firebaseUser.email) {
+        // Look up by email for migrated users (from Supabase/MongoDB backup)
+        try {
+          const searchEmail = firebaseUser.email.toLowerCase();
+          console.log(`Searching for migrated profile with email: ${searchEmail}`);
+          const q = query(collection(db, 'profiles'), where('email', '==', searchEmail));
+          const qSnap = await getDocs(q);
+
+          if (!qSnap.empty) {
+            console.log(`Found migrated profile for ${searchEmail}, linking to UID...`);
+            profileData = qSnap.docs[0].data();
+
+            // Create/Link the profile to the new Firebase UID
+            await setDoc(doc(db, 'profiles', firebaseUser.uid), {
+              ...profileData,
+              id: firebaseUser.uid, // Update ID to Firebase UID
+              auth_uid: firebaseUser.uid,
+              updated_at: serverTimestamp()
+            });
+            console.log('Profile linked successfully. Role:', profileData?.role);
+          } else {
+            console.warn(`No profile document found for UID ${firebaseUser.uid} AND no migrated profile found for email ${searchEmail}`);
+          }
+        } catch (searchError) {
+          console.warn('Migrated profile search failed:', searchError);
+        }
+      }
 
       const userProfile: User = {
-        id: supabaseUser.id,
-        email: supabaseUser.email || '',
-        name: emailPrefixToName(supabaseUser.email?.split('@')[0] || ''),
-        displayName: emailPrefixToName(supabaseUser.email?.split('@')[0] || ''),
-        role: (profile?.role as 'user' | 'admin') || 'user'
+        id: firebaseUser.uid,
+        email: firebaseUser.email || '',
+        name: profileData?.name || profileData?.display_name || emailPrefixToName(firebaseUser.email?.split('@')[0] || ''),
+        displayName: profileData?.display_name || profileData?.name || emailPrefixToName(firebaseUser.email?.split('@')[0] || ''),
+        role: (profileData?.role as 'user' | 'admin') || 'user'
       };
-
-      if (error) {
-        console.warn('Profile not found, using basic user');
-        // Try to create profile in background
-        // Create profile in background
-        (async () => {
-          try {
-            await supabase
-              .from('profiles')
-              .insert({
-                id: supabaseUser.id,
-                email: supabaseUser.email || '',
-                name: emailPrefixToName(supabaseUser.email?.split('@')[0] || ''),
-                display_name: emailPrefixToName(supabaseUser.email?.split('@')[0] || ''),
-                role: 'user'
-              });
-            console.log('Profile created in background');
-          } catch (err) {
-            console.warn('Background profile creation failed:', err);
-          }
-        })();
-      } else {
-        console.log('✅ Profile loaded:', userProfile.role);
-      }
 
       // Cache the profile for next time
       cacheUserProfile(userProfile);
       return userProfile;
     } catch (error) {
-      console.warn('Profile fetch failed, using fallback');
+      console.warn('Profile fetch failed, using fallback', error);
       const fallbackUser: User = {
-        id: supabaseUser.id,
-        email: supabaseUser.email || '',
-        name: emailPrefixToName(supabaseUser.email?.split('@')[0] || ''),
-        displayName: emailPrefixToName(supabaseUser.email?.split('@')[0] || ''),
+        id: firebaseUser.uid,
+        email: firebaseUser.email || '',
+        name: emailPrefixToName(firebaseUser.email?.split('@')[0] || ''),
+        displayName: emailPrefixToName(firebaseUser.email?.split('@')[0] || ''),
         role: 'user'
       };
       return fallbackUser;
     }
   };
 
-  // Login function - lightning fast with caching
+  // Login function
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
-    if (!hasValidSupabaseConfig) {
-      console.log('🔄 Using mock authentication - configure Supabase for real functionality');
-      const result = await mockAuthService.login(email, password);
-      if (result.success) {
-        const mockUser = mockAuthService.getCurrentUser();
-        setUser(mockUser);
-      }
-      return result;
-    }
-
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-      if (error) {
-        return { success: false, error: error.message };
-      }
-
-      if (data.user) {
-        // Get profile with caching - super fast
-        const userProfile = await getUserProfile(data.user, true);
+      if (userCredential.user) {
+        const userProfile = await getUserProfile(userCredential.user, false);
         if (userProfile) {
           setUser(userProfile);
-          console.log('⚡ Login complete with role:', userProfile.role);
           return { success: true };
         }
-
-        // This should never happen with the new implementation
-        return { success: false, error: 'Failed to load profile' };
       }
-
-      return { success: false, error: 'Authentication failed' };
-    } catch (error) {
+      return { success: false, error: 'Failed to load profile' };
+    } catch (error: any) {
       console.error('❌ Login error:', error);
-      return { success: false, error: 'An unexpected error occurred' };
+      let message = 'An error occurred during login';
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+        message = 'Invalid email or password';
+      }
+      return { success: false, error: message };
     }
   };
 
   // Signup function
   const signup = async (email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> => {
-    if (!hasValidSupabaseConfig) {
-      const result = await mockAuthService.signup(email, password, name);
-      if (result.success) {
-        const mockUser = mockAuthService.getCurrentUser();
-        setUser(mockUser);
-      }
-      return result;
-    }
-
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password
-      });
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-      if (error) {
-        return { success: false, error: error.message };
-      }
+      if (userCredential.user) {
+        // First, check if a profile was already linked (migrated profile)
+        const userProfile = await getUserProfile(userCredential.user, false);
 
-      if (data.user) {
-        // Create profile in profiles table
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            email: data.user.email!,
-            name,
-            display_name: name,
-            role: 'user'
-          });
+        // Only create a new profile if one doesn't exist yet
+        if (!userProfile || (userProfile.name === emailPrefixToName(userCredential.user.email?.split('@')[0] || '') && userProfile.role === 'user')) {
+          // Double check if it actually exists in Firestore to avoid overwriting migrated data
+          const profileSnap = await getDoc(doc(db, 'profiles', userCredential.user.uid));
 
-        if (profileError) {
-          console.error('Error creating profile:', profileError);
+          if (!profileSnap.exists()) {
+            await setDoc(doc(db, 'profiles', userCredential.user.uid), {
+              id: userCredential.user.uid,
+              auth_uid: userCredential.user.uid,
+              email: userCredential.user.email!,
+              name,
+              display_name: name,
+              role: 'user',
+              created_at: serverTimestamp(),
+              updated_at: serverTimestamp()
+            });
 
-          // For now, let's allow signup to succeed even if profile creation fails
-          // The user can still use the app, just without the extended profile features
-          console.warn('Profile creation failed, but user account was created successfully');
-
-          return {
-            success: true,
-            error: 'Account created! Note: Some features may be limited until database is fully configured.'
-          };
+            // Refresh profile after creation
+            const newProfile = await getUserProfile(userCredential.user, false);
+            setUser(newProfile);
+          } else {
+            setUser(userProfile);
+          }
+        } else {
+          setUser(userProfile);
         }
 
         return { success: true };
       }
-
       return { success: false, error: 'Failed to create user' };
-    } catch (error) {
-      return { success: false, error: 'An unexpected error occurred' };
+    } catch (error: any) {
+      console.error('❌ Signup error:', error);
+      return { success: false, error: error.message || 'An error occurred during signup' };
     }
   };
 
   // Logout function
   const logout = async () => {
-    if (!hasValidSupabaseConfig) {
-      await mockAuthService.logout();
-      setUser(null);
-      clearCachedUserProfile();
-      return;
-    }
-
     try {
-      await supabase.auth.signOut();
+      await signOut(auth);
       setUser(null);
       clearCachedUserProfile();
     } catch (error) {
@@ -249,103 +247,39 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // Refresh user profile (useful for admin role updates)
+  // Refresh user profile
   const refreshUserProfile = async () => {
-    if (!hasValidSupabaseConfig || !user) return;
-
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const userProfile = await getUserProfile(session.user);
-        if (userProfile) {
-          setUser(userProfile);
-          console.log('🔄 User profile refreshed');
-        }
+    if (auth.currentUser) {
+      const userProfile = await getUserProfile(auth.currentUser, false);
+      if (userProfile) {
+        setUser(userProfile);
       }
-    } catch (error) {
-      console.warn('Profile refresh failed, keeping current user');
-      // Don't log error to reduce console noise
     }
   };
 
-  // Check for existing session and listen for auth changes
+  // Listen for auth changes
   useEffect(() => {
-    if (!hasValidSupabaseConfig) {
-      // Use mock auth
-      const mockUser = mockAuthService.getCurrentUser();
-      setUser(mockUser);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        // Bypass cache on initial load to ensure we have the latest role (especially after linking)
+        const userProfile = await getUserProfile(firebaseUser, false);
+        setUser(userProfile);
+      } else {
+        setUser(null);
+        clearCachedUserProfile();
+      }
       setLoading(false);
-      return;
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      console.log('👤 Current User Profile:', user);
+      console.log('🛡️ Is Admin:', user.role === 'admin');
     }
-
-    // Get initial session - instant with caching
-    const getInitialSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-
-        if (session?.user) {
-          console.log('🔍 Found existing session');
-
-          // Try cache first for instant loading
-          const cachedProfile = getCachedUserProfile();
-          if (cachedProfile && cachedProfile.id === session.user.id) {
-            console.log('⚡ Restored from cache with role:', cachedProfile.role);
-            setUser(cachedProfile);
-            setLoading(false);
-
-            // Refresh profile in background
-            getUserProfile(session.user, false).then(freshProfile => {
-              if (freshProfile && freshProfile.role !== cachedProfile.role) {
-                console.log('🔄 Profile updated in background');
-                setUser(freshProfile);
-              }
-            });
-            return;
-          }
-
-          // No cache, load profile normally
-          const userProfile = await getUserProfile(session.user, false);
-          if (userProfile) {
-            setUser(userProfile);
-            console.log('✅ Session restored with role:', userProfile.role);
-          }
-        }
-      } catch (error) {
-        console.error('Error getting initial session:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getInitialSession();
-
-    // Listen for auth changes - fast with caching
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          const userProfile = await getUserProfile(session.user, true);
-          if (userProfile) {
-            setUser(userProfile);
-            console.log('⚡ Auth state updated with role:', userProfile.role);
-          }
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-          clearCachedUserProfile();
-        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-          // Use cache for token refresh to avoid delays
-          const userProfile = await getUserProfile(session.user, true);
-          if (userProfile) {
-            setUser(userProfile);
-          }
-        }
-        setLoading(false);
-      }
-    );
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []); // Remove user dependency to prevent multiple intervals
+  }, [user]);
 
   const value: AuthContextType = {
     user,

@@ -1,4 +1,4 @@
-// Mock service for when Supabase is not configured
+// Mock service for when MongoDB is not configured
 export interface Project {
   id: string;
   title: string;
@@ -109,9 +109,9 @@ class MockProjectService {
           created_at: new Date().toISOString().split('T')[0],
           status: 'pending'
         };
-        
+
         this.projects.push(newProject);
-        
+
         resolve({
           success: true,
           message: 'Project submitted successfully! (Mock mode - set up Supabase for real functionality)'

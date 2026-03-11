@@ -1,5 +1,17 @@
-import { supabase, hasValidSupabaseConfig } from '@/lib/supabase';
-import { mockProjectService } from './mockProjectService';
+import { db } from "@/lib/firebase";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  updateDoc,
+  doc,
+  deleteDoc,
+  orderBy,
+  getDoc,
+  serverTimestamp
+} from "firebase/firestore";
 import { emailService } from './emailService';
 import { toastNotificationService } from './toastNotificationService';
 
@@ -30,84 +42,56 @@ export interface ProjectSubmission {
 }
 
 class ProjectService {
+  private get collection() {
+    return collection(db, 'projects');
+  }
+
   // Get all approved projects for public display
   async getApprovedProjects(): Promise<Project[]> {
-    if (!hasValidSupabaseConfig) {
-      console.log('🔄 Using mock data - configure Supabase for real functionality');
-      return mockProjectService.getApprovedProjects();
-    }
-
     try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('status', 'approved')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching approved projects:', error);
-        return [];
-      }
-
-      return data || [];
+      const q = query(
+        this.collection,
+        where('status', '==', 'approved'),
+        orderBy('created_at', 'desc')
+      );
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Project[];
     } catch (error) {
-      console.error('Error in getApprovedProjects:', error);
+      console.error('Error fetching approved projects:', error);
       return [];
     }
   }
 
   // Get all projects (admin only)
   async getAllProjects(): Promise<Project[]> {
-    if (!hasValidSupabaseConfig) {
-      return mockProjectService.getAllProjects();
-    }
-
     try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching all projects:', error);
-        return [];
-      }
-
-      return data || [];
+      const q = query(this.collection, orderBy('created_at', 'desc'));
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Project[];
     } catch (error) {
-      console.error('Error in getAllProjects:', error);
+      console.error('Error fetching all projects:', error);
       return [];
     }
   }
 
   // Submit a new project
   async submitProject(projectData: ProjectSubmission): Promise<{ success: boolean; message: string }> {
-    if (!hasValidSupabaseConfig) {
-      return mockProjectService.submitProject(projectData);
-    }
-
     try {
-      const { error } = await supabase
-        .from('projects')
-        .insert({
-          title: projectData.title,
-          description: projectData.description,
-          author: projectData.author,
-          author_email: projectData.author_email,
-          technologies: projectData.technologies,
-          github_url: projectData.github_url || null,
-          live_url: projectData.live_url || null,
-          image_url: projectData.image_url || null,
-          status: 'pending'
-        });
-
-      if (error) {
-        console.error('Error submitting project:', error);
-        return {
-          success: false,
-          message: 'Failed to submit project. Please try again.'
-        };
-      }
+      await addDoc(this.collection, {
+        ...projectData,
+        github_url: projectData.github_url || null,
+        live_url: projectData.live_url || null,
+        image_url: projectData.image_url || null,
+        status: 'pending',
+        created_at: new Date().toISOString(),
+        likes_count: 0
+      });
 
       return {
         success: true,
@@ -124,50 +108,33 @@ class ProjectService {
 
   // Approve a project (admin only)
   async approveProject(projectId: string): Promise<{ success: boolean; message: string }> {
-    if (!hasValidSupabaseConfig) {
-      return mockProjectService.approveProject(projectId);
-    }
-
     try {
-      // First get the project details to send notification
-      const { data: project, error: fetchError } = await supabase
-        .from('projects')
-        .select('title, author_email')
-        .eq('id', projectId)
-        .single();
+      const projectRef = doc(db, 'projects', projectId);
+      const projectSnap = await getDoc(projectRef);
 
-      if (fetchError) {
-        console.error('Error fetching project for notification:', fetchError);
+      if (!projectSnap.exists()) {
+        console.error('Project not found for approval:', projectId);
         return {
           success: false,
-          message: 'Failed to approve project'
+          message: 'Failed to find project'
         };
       }
+
+      const projectData = projectSnap.data();
 
       // Update project status
-      const { error } = await supabase
-        .from('projects')
-        .update({ 
-          status: 'approved',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', projectId);
-
-      if (error) {
-        console.error('Error approving project:', error);
-        return {
-          success: false,
-          message: 'Failed to approve project'
-        };
-      }
+      await updateDoc(projectRef, {
+        status: 'approved',
+        updated_at: serverTimestamp()
+      });
 
       // Show toast notification for project approval
-      toastNotificationService.showProjectApproval(project.title);
+      toastNotificationService.showProjectApproval(projectData.title);
 
       // Send email notification
       await emailService.sendProjectApprovalEmail(
-        project.author_email,
-        project.title,
+        projectData.author_email,
+        projectData.title,
         projectId
       );
 
@@ -186,50 +153,33 @@ class ProjectService {
 
   // Reject a project (admin only)
   async rejectProject(projectId: string): Promise<{ success: boolean; message: string }> {
-    if (!hasValidSupabaseConfig) {
-      return mockProjectService.rejectProject(projectId);
-    }
-
     try {
-      // First get the project details to send notification
-      const { data: project, error: fetchError } = await supabase
-        .from('projects')
-        .select('title, author_email')
-        .eq('id', projectId)
-        .single();
+      const projectRef = doc(db, 'projects', projectId);
+      const projectSnap = await getDoc(projectRef);
 
-      if (fetchError) {
-        console.error('Error fetching project for notification:', fetchError);
+      if (!projectSnap.exists()) {
+        console.error('Project not found for rejection:', projectId);
         return {
           success: false,
-          message: 'Failed to reject project'
+          message: 'Failed to find project'
         };
       }
+
+      const projectData = projectSnap.data();
 
       // Update project status
-      const { error } = await supabase
-        .from('projects')
-        .update({ 
-          status: 'rejected',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', projectId);
-
-      if (error) {
-        console.error('Error rejecting project:', error);
-        return {
-          success: false,
-          message: 'Failed to reject project'
-        };
-      }
+      await updateDoc(projectRef, {
+        status: 'rejected',
+        updated_at: serverTimestamp()
+      });
 
       // Show toast notification for project rejection
-      toastNotificationService.showProjectRejection(project.title);
+      toastNotificationService.showProjectRejection(projectData.title);
 
       // Send email notification
       await emailService.sendProjectRejectionEmail(
-        project.author_email,
-        project.title,
+        projectData.author_email,
+        projectData.title,
         projectId
       );
 
@@ -248,48 +198,27 @@ class ProjectService {
 
   // Get projects by status
   async getProjectsByStatus(status: 'pending' | 'approved' | 'rejected'): Promise<Project[]> {
-    if (!hasValidSupabaseConfig) {
-      return mockProjectService.getProjectsByStatus(status);
-    }
-
     try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('status', status)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error(`Error fetching ${status} projects:`, error);
-        return [];
-      }
-
-      return data || [];
+      const q = query(
+        this.collection,
+        where('status', '==', status),
+        orderBy('created_at', 'desc')
+      );
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Project[];
     } catch (error) {
-      console.error('Error in getProjectsByStatus:', error);
+      console.error(`Error fetching ${status} projects:`, error);
       return [];
     }
   }
 
   // Delete a project (admin only)
   async deleteProject(projectId: string): Promise<{ success: boolean; message: string }> {
-    if (!hasValidSupabaseConfig) {
-      return mockProjectService.deleteProject(projectId);
-    }
-
     try {
-      const { error } = await supabase
-        .from('projects')
-        .delete()
-        .eq('id', projectId);
-
-      if (error) {
-        console.error('Error deleting project:', error);
-        return {
-          success: false,
-          message: 'Failed to delete project'
-        };
-      }
+      await deleteDoc(doc(db, 'projects', projectId));
 
       return {
         success: true,
@@ -311,24 +240,16 @@ class ProjectService {
     approved: number;
     rejected: number;
   }> {
-    if (!hasValidSupabaseConfig) {
-      return mockProjectService.getProjectStats();
-    }
-
     try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('status');
+      const querySnapshot = await getDocs(this.collection);
 
-      if (error) {
-        console.error('Error fetching project stats:', error);
-        return { total: 0, pending: 0, approved: 0, rejected: 0 };
-      }
-
-      const stats = data.reduce(
-        (acc, project) => {
+      const stats = querySnapshot.docs.reduce(
+        (acc: any, doc: any) => {
+          const project = doc.data();
           acc.total++;
-          acc[project.status]++;
+          if (acc[project.status] !== undefined) {
+            acc[project.status]++;
+          }
           return acc;
         },
         { total: 0, pending: 0, approved: 0, rejected: 0 }

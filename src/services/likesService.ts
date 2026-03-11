@@ -1,15 +1,31 @@
-import { supabase, hasValidSupabaseConfig } from '@/lib/supabase';
+import { db } from "@/lib/firebase";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  updateDoc,
+  doc,
+  deleteDoc,
+  getDoc,
+  serverTimestamp,
+  increment,
+  writeBatch
+} from "firebase/firestore";
 
 export interface Like {
   id: string;
   user_email: string;
   item_id: string;
   item_type: 'project' | 'story';
-  created_at: string;
+  created_at: any;
 }
 
 class LikesService {
-  private mockLikes: Map<string, Set<string>> = new Map(); // itemId -> Set of user emails
+  private get collection() {
+    return collection(db, 'likes');
+  }
 
   // Toggle like for an item (project or story)
   async toggleLike(
@@ -17,61 +33,46 @@ class LikesService {
     itemId: string,
     itemType: 'project' | 'story'
   ): Promise<{ success: boolean; liked: boolean; count: number; message: string }> {
-    if (!hasValidSupabaseConfig) {
-      return this.toggleLikeMock(userEmail, itemId, itemType);
-    }
-
     try {
-      // Check if user already liked this item
-      const { data: existingLike, error: checkError } = await supabase
-        .from('likes')
-        .select('id')
-        .eq('user_email', userEmail)
-        .eq('item_id', itemId)
-        .eq('item_type', itemType)
-        .single();
+      const likeId = `${itemId}_${userEmail.replace(/[@.]/g, '_')}`;
+      const likeRef = doc(db, 'likes', likeId);
+      const likeSnap = await getDoc(likeRef);
 
-      if (checkError && checkError.code !== 'PGRST116') {
-        console.error('Error checking existing like:', checkError);
-        return this.toggleLikeMock(userEmail, itemId, itemType);
-      }
-
+      const batch = writeBatch(db);
       let liked = false;
-      
-      if (existingLike) {
-        // Unlike - remove the like
-        const { error: deleteError } = await supabase
-          .from('likes')
-          .delete()
-          .eq('id', existingLike.id);
 
-        if (deleteError) {
-          console.error('Error removing like:', deleteError);
-          return { success: false, liked: false, count: 0, message: 'Failed to unlike' };
-        }
-        
+      if (likeSnap.exists()) {
+        // Unlike
+        batch.delete(likeRef);
         liked = false;
-      } else {
-        // Like - add the like
-        const { error: insertError } = await supabase
-          .from('likes')
-          .insert({
-            user_email: userEmail,
-            item_id: itemId,
-            item_type: itemType
-          });
 
-        if (insertError) {
-          console.error('Error adding like:', insertError);
-          return { success: false, liked: false, count: 0, message: 'Failed to like' };
+        // Update project likes_count if it's a project
+        if (itemType === 'project') {
+          const projectRef = doc(db, 'projects', itemId);
+          batch.update(projectRef, { likes_count: increment(-1) });
         }
-        
+      } else {
+        // Like
+        batch.set(likeRef, {
+          user_email: userEmail,
+          item_id: itemId,
+          item_type: itemType,
+          created_at: serverTimestamp()
+        });
         liked = true;
+
+        // Update project likes_count if it's a project
+        if (itemType === 'project') {
+          const projectRef = doc(db, 'projects', itemId);
+          batch.update(projectRef, { likes_count: increment(1) });
+        }
       }
+
+      await batch.commit();
 
       // Get updated count
       const count = await this.getLikesCount(itemId, itemType);
-      
+
       return {
         success: true,
         liked,
@@ -80,32 +81,29 @@ class LikesService {
       };
     } catch (error) {
       console.error('Error in toggleLike:', error);
-      return this.toggleLikeMock(userEmail, itemId, itemType);
+      return { success: false, liked: false, count: 0, message: 'An error occurred' };
     }
   }
 
   // Get likes count for an item
   async getLikesCount(itemId: string, itemType: 'project' | 'story'): Promise<number> {
-    if (!hasValidSupabaseConfig) {
-      return this.mockLikes.get(itemId)?.size || 0;
-    }
-
     try {
-      const { count, error } = await supabase
-        .from('likes')
-        .select('*', { count: 'exact', head: true })
-        .eq('item_id', itemId)
-        .eq('item_type', itemType);
-
-      if (error) {
-        console.error('Error getting likes count:', error);
-        return this.mockLikes.get(itemId)?.size || 0;
+      if (itemType === 'project') {
+        const projectRef = doc(db, 'projects', itemId);
+        const projectSnap = await getDoc(projectRef);
+        return projectSnap.exists() ? (projectSnap.data()?.likes_count || 0) : 0;
       }
 
-      return count || 0;
+      const q = query(
+        this.collection,
+        where('item_id', '==', itemId),
+        where('item_type', '==', itemType)
+      );
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.size;
     } catch (error) {
       console.error('Error in getLikesCount:', error);
-      return this.mockLikes.get(itemId)?.size || 0;
+      return 0;
     }
   }
 
@@ -115,25 +113,10 @@ class LikesService {
     itemId: string,
     itemType: 'project' | 'story'
   ): Promise<boolean> {
-    if (!hasValidSupabaseConfig) {
-      return this.mockLikes.get(itemId)?.has(userEmail) || false;
-    }
-
     try {
-      const { data, error } = await supabase
-        .from('likes')
-        .select('id')
-        .eq('user_email', userEmail)
-        .eq('item_id', itemId)
-        .eq('item_type', itemType)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error checking user like:', error);
-        return false;
-      }
-
-      return !!data;
+      const likeId = `${itemId}_${userEmail.replace(/[@.]/g, '_')}`;
+      const likeSnap = await getDoc(doc(db, 'likes', likeId));
+      return likeSnap.exists();
     } catch (error) {
       console.error('Error in hasUserLiked:', error);
       return false;
@@ -147,79 +130,19 @@ class LikesService {
   ): Promise<Map<string, { count: number; userLiked: boolean }>> {
     const result = new Map<string, { count: number; userLiked: boolean }>();
 
-    if (!hasValidSupabaseConfig) {
-      // Mock data
-      items.forEach(item => {
-        const count = this.mockLikes.get(item.id)?.size || Math.floor(Math.random() * 50);
-        const userLiked = this.mockLikes.get(item.id)?.has(userEmail) || false;
-        result.set(item.id, { count, userLiked });
-      });
-      return result;
-    }
-
     try {
-      // Get all likes for these items
-      const itemIds = items.map(item => item.id);
-      const { data: likes, error } = await supabase
-        .from('likes')
-        .select('item_id, user_email')
-        .in('item_id', itemIds);
-
-      if (error) {
-        console.error('Error getting bulk likes:', error);
-        return result;
-      }
-
-      // Process the data
-      items.forEach(item => {
-        const itemLikes = likes?.filter(like => like.item_id === item.id) || [];
-        const count = itemLikes.length;
-        const userLiked = itemLikes.some(like => like.user_email === userEmail);
+      // For each item, get its status
+      await Promise.all(items.map(async (item) => {
+        const count = await this.getLikesCount(item.id, item.type);
+        const userLiked = await this.hasUserLiked(userEmail, item.id, item.type);
         result.set(item.id, { count, userLiked });
-      });
+      }));
 
       return result;
     } catch (error) {
       console.error('Error in getLikesForItems:', error);
       return result;
     }
-  }
-
-  // Mock implementation for development
-  private toggleLikeMock(
-    userEmail: string,
-    itemId: string,
-    itemType: 'project' | 'story'
-  ): { success: boolean; liked: boolean; count: number; message: string } {
-    if (!this.mockLikes.has(itemId)) {
-      this.mockLikes.set(itemId, new Set());
-    }
-
-    const itemLikes = this.mockLikes.get(itemId)!;
-    const wasLiked = itemLikes.has(userEmail);
-
-    if (wasLiked) {
-      itemLikes.delete(userEmail);
-    } else {
-      itemLikes.add(userEmail);
-    }
-
-    const liked = !wasLiked;
-    const count = itemLikes.size;
-
-    console.log(`🔄 Mock ${itemType} ${liked ? 'liked' : 'unliked'}:`, {
-      itemId,
-      userEmail,
-      count,
-      timestamp: new Date().toISOString()
-    });
-
-    return {
-      success: true,
-      liked,
-      count,
-      message: liked ? 'Liked!' : 'Unliked!'
-    };
   }
 }
 

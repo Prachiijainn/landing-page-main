@@ -1,4 +1,4 @@
-// Mock authentication service for when Supabase is not configured
+// Mock authentication service for when Firebase is not configured
 
 interface User {
   id: string;
@@ -24,7 +24,7 @@ class MockAuthService {
       localStorage.setItem('mockUser', JSON.stringify(this.currentUser));
       return { success: true };
     }
-    
+
     // Mock regular user
     if (email === 'user@example.com' && password === 'user123') {
       this.currentUser = {
@@ -37,7 +37,7 @@ class MockAuthService {
       localStorage.setItem('mockUser', JSON.stringify(this.currentUser));
       return { success: true };
     }
-    
+
     return { success: false, error: 'Invalid email or password' };
   }
 
@@ -50,13 +50,13 @@ class MockAuthService {
       displayName: name,
       role: 'user'
     };
-    
+
     this.currentUser = newUser;
     localStorage.setItem('mockUser', JSON.stringify(newUser));
-    
-    return { 
-      success: true, 
-      error: undefined 
+
+    return {
+      success: true,
+      error: undefined
     };
   }
 
@@ -67,7 +67,7 @@ class MockAuthService {
 
   getCurrentUser(): User | null {
     if (this.currentUser) return this.currentUser;
-    
+
     const saved = localStorage.getItem('mockUser');
     if (saved) {
       try {
@@ -77,7 +77,7 @@ class MockAuthService {
         localStorage.removeItem('mockUser');
       }
     }
-    
+
     return null;
   }
 
@@ -85,9 +85,9 @@ class MockAuthService {
     // Simple mock implementation
     const user = this.getCurrentUser();
     callback(user);
-    
+
     // Return unsubscribe function
-    return () => {};
+    return () => { };
   }
 }
 

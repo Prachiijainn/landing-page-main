@@ -28,7 +28,7 @@ const ProjectsSection = () => {
     }
   };
 
-  // Load approved projects from Supabase
+  // Load approved projects from MongoDB
   useEffect(() => {
     const loadProjects = async () => {
       try {
